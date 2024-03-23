@@ -16,37 +16,37 @@
    <left>
       <AnchorPane prefHeight="550.0" prefWidth="307.0" styleClass="top-side" stylesheets="@loginstyle.css">
          <children>
-            <TextField fx:id="usernameLabel" layoutX="78.0" layoutY="244.0" prefHeight="35.0" prefWidth="150.0" promptText="Username">
+            <TextField fx:id="usernameLabel" layoutX="78.0" layoutY="244.0" prefHeight="35.0" prefWidth="150.0" promptText="Username" AnchorPane.leftAnchor="78.0" AnchorPane.rightAnchor="80.0">
                <font>
                   <Font name="Tw Cen MT Condensed Extra Bold" size="12.0" />
                </font>
             </TextField>
-            <PasswordField fx:id="passwordLabel" layoutX="78.0" layoutY="308.0" prefHeight="35.0" prefWidth="150.0" promptText="Password">
+            <PasswordField fx:id="passwordLabel" layoutX="78.0" layoutY="308.0" prefHeight="35.0" prefWidth="150.0" promptText="Password" AnchorPane.leftAnchor="78.0" AnchorPane.rightAnchor="78.39999999999998">
                <font>
                   <Font name="Tw Cen MT Condensed Extra Bold" size="12.0" />
                </font>
             </PasswordField>
-            <Button fx:id="loginButton" layoutX="119.0" layoutY="387.0" mnemonicParsing="false" onAction="#handleLoginButtonAction" prefHeight="26.0" prefWidth="70.0" style="-fx-background-color: #4F2B2D;" stylesheets="@loginstyle.css" text="Login" textFill="WHITE">
+            <Button fx:id="loginButton" layoutX="118.0" layoutY="386.0" mnemonicParsing="false" onAction="#handleLoginButtonAction" prefHeight="26.0" prefWidth="70.0" style="-fx-background-color: #4F2B2D;" stylesheets="@loginstyle.css" text="Login" textFill="WHITE" AnchorPane.leftAnchor="118.0" AnchorPane.rightAnchor="118.79999999999998">
                <font>
                   <Font name="Tw Cen MT Condensed Extra Bold" size="12.0" />
                </font>
             </Button>
-            <Text fill="#4f2b2d" layoutX="93.0" layoutY="169.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Log In">
+            <Text fill="#4f2b2d" layoutX="93.0" layoutY="169.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Log In" AnchorPane.bottomAnchor="420.2005859375" AnchorPane.leftAnchor="93.0" AnchorPane.rightAnchor="92.14804687499998" AnchorPane.topAnchor="122.728515625">
                <font>
                   <Font name="Tw Cen MT Condensed Extra Bold" size="53.0" />
                </font>
             </Text>
-            <Text fill="#4f2b2d" layoutX="111.0" layoutY="193.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Log In to Continue" textAlignment="CENTER">
+            <Text fill="#4f2b2d" layoutX="110.0" layoutY="194.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Log In to Continue" textAlignment="CENTER" AnchorPane.leftAnchor="110.0" AnchorPane.rightAnchor="111.6484375">
                <font>
                   <Font name="Tw Cen MT Condensed" size="16.0" />
                </font>
             </Text>
-            <Label fx:id="usernamelabel" layoutX="79.0" layoutY="227.0" text="Username" textFill="#4f2b2d">
+            <Label fx:id="usernamelabel" layoutX="79.0" layoutY="227.0" text="Username" textFill="#4f2b2d" AnchorPane.leftAnchor="79.0" AnchorPane.rightAnchor="180.8">
                <font>
                   <Font name="Tw Cen MT Condensed" size="16.0" />
                </font>
             </Label>
-            <Label fx:id="passwordlabel" layoutX="78.0" layoutY="291.0" text="Password">
+            <Label fx:id="passwordlabel" layoutX="79.0" layoutY="291.0" text="Password" AnchorPane.leftAnchor="79.0" AnchorPane.rightAnchor="179.39999999999998">
                <font>
                   <Font name="Tw Cen MT Condensed" size="16.0" />
                </font>
@@ -57,7 +57,7 @@
    <right>
       <AnchorPane prefHeight="550.0" prefWidth="634.0" style="-fx-background-color: white;">
          <children>
-            <ImageView fitHeight="460.0" fitWidth="559.0" layoutX="82.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="82.0" AnchorPane.rightAnchor="81.52530517578123" AnchorPane.topAnchor="70.0">
+            <ImageView fitHeight="450.0" fitWidth="474.0" layoutX="87.0" layoutY="75.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="87.0" AnchorPane.topAnchor="74.39999999999998">
                <image>
                   <Image url="@img/LogoSD.png" />
                </image>
