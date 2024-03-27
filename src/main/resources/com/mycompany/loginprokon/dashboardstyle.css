@@ -2,6 +2,54 @@
  * Empty Stylesheet file.
  */
 
-.mainFxmlClass {
+.navform {
+    -fx-background-color:linear-gradient(to top ,#735146,#E3C891);
 
+}
+.navbtn{
+    -fx-background-color:transparent;
+    -fx-cursor:hand;
+    -fx-text-fill:#ffffff;
+    -fx-font-size:16px;
+    -fx-font-family:"Tahoma";
+    -fx-font-type:bold;
+    -fx-alignment:CENTER-LEFT;
+
+}
+
+.logoutbutton {
+    -fx-background-color:#bda576;
+    -fx-cursor:hand;
+    -fx-text-fill:#ffffff;
+    -fx-font-size:16px;
+    -fx-font-family:"Tahoma";
+    -fx-font-type:bold;
+    -fx-alignment:CENTER-LEFT;
+    -fx-background-radius:10px;
+}
+
+.shadow{
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 0);
+
+}
+
+.navbtn:hover {
+    -fx-background-color:#735146;
+}
+
+.logoutbutton:hover {
+-fx-background-color:#E3C891;;
+}
+
+.whitebg{
+    -fx-background-color:#FAFAFA;
+    -fx-background-radius:8px;
+}
+
+.card {
+    -fx-background-color: linear-gradient(to bottom right, #a77c6e, #a4926d);
+    -fx-background-radius: 10px; 
+    -fx-border-radius: 10px; 
+    -fx-padding: 10px; 
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 10, 0, 0, 0); 
 }

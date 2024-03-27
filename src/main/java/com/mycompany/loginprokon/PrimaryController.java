@@ -20,26 +20,31 @@ public class PrimaryController {
     private TextField usernameLabel;
 
     @FXML
-    private void handleLoginButtonAction(ActionEvent event) throws IOException{
-        
-            String username = usernameLabel.getText();
+    private void handleLoginButtonAction(ActionEvent event) throws IOException {
+        String username = usernameLabel.getText();
 
-            // Memuat file FXML dashboard.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("dashboard.fxml"));
-            Parent root = loader.load();
-            
-            DashboardController dashboardController = loader.getController();
-            dashboardController.displayName(username);
-            // Membuat scene baru
-            Scene scene = new Scene(root);
-            
-            // Mengambil stage (jendela) dari event
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            
-            // Menetapkan scene baru ke stage
-            stage.setScene(scene);
-            stage.show();
-        
+        // Memuat file FXML dashboard.fxml
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("dashboard.fxml"));
+        Parent root = loader.load();
+
+        DashboardController dashboardController = loader.getController();
+        dashboardController.displayName(username);
+
+        // Membuat scene baru
+        Scene scene = new Scene(root);
+
+        // Mengambil stage (jendela) dari event
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        // Mengatur lebar dan tinggi stage
+        double width = 920; // Tentukan lebar yang diinginkan
+        double height = 640; // Tentukan tinggi yang diinginkan
+        stage.setWidth(width);
+        stage.setHeight(height);
+
+        // Menetapkan scene baru ke stage
+        stage.setScene(scene);
+        stage.show();
     }
-}
 
+}
