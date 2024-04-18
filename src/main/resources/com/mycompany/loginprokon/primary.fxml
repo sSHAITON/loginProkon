@@ -57,7 +57,7 @@
    <right>
       <AnchorPane prefHeight="550.0" prefWidth="634.0" style="-fx-background-color: white;">
          <children>
-            <ImageView fitHeight="450.0" fitWidth="474.0" layoutX="87.0" layoutY="75.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="87.0" AnchorPane.topAnchor="74.39999999999998">
+            <ImageView fitHeight="450.0" fitWidth="474.0" layoutX="65.8" layoutY="74.4" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="76.39999999999998" AnchorPane.leftAnchor="65.8" AnchorPane.topAnchor="74.4">
                <image>
                   <Image url="@img/LogoSD.png" />
                </image>

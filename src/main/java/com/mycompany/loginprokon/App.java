@@ -9,9 +9,6 @@ import java.io.IOException;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
-/**
- * JavaFX App
- */
 public class App extends Application {
 
     private static Scene scene;
@@ -19,7 +16,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         try {
-            scene = new Scene(loadFXML("primary"), 940, 640);
+            scene = new Scene(loadFXML("primary"), 905, 603);
             stage.setScene(scene);
             stage.show();
 
@@ -47,16 +44,12 @@ public class App extends Application {
         alert.setContentText("Apakah anda ingin Logout ?");
 
         if (alert.showAndWait().get() == ButtonType.OK) {
-            // Memuat file FXML Primary.fxml
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Primary.fxml"));
             Parent root = loader.load();
 
-            // Membuat scene baru
             Scene scene = new Scene(root);
 
-            // Mengambil stage (jendela) dari event
-
-            // Menetapkan scene baru ke stage
             stage.setScene(scene);
             stage.show();
         }
