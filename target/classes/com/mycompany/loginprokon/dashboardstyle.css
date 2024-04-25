@@ -37,6 +37,10 @@
     -fx-background-color:#735146;
 }
 
+.navbtn:active {
+    -fx-background-color:#735146;
+}
+
 .logoutbutton:hover {
 -fx-background-color:#E3C891;;
 }
@@ -68,13 +72,13 @@
 .choicebox{
     -fx-background-color:white;
     -fx-background-radius:5px;
-    -fx-border-color:#000;
+    -fx-border-color:transparent;
     -fx-border-width:.2px;
     -fx-border-radius:1px;
 }
 
 .table-view{
-    -fx-background-color:#7B5451;
+    -fx-background-color:#C2967F;    
     -fx-padding:0px;
     -fx-text-fill:#ffffff;
     -fx-font-family:Tahoma;
@@ -83,12 +87,12 @@
 
 .table-view .column-header{
     -fx-border-color:linear-gradient(to bottom right, #a77c6e, #a4926d);
-    -fx-border-width:0px 0px 1px 0px;
-    -fx-border-radius: 0px 0px 0px 0px;
+    -fx-border-width:0px 0px 0px 0px;
+    -fx-border-radius: 7px 7px 7px 7px;
 }
 
 .table-view .column-header-background{
-    -fx-background-color:#C2967F;
+    -fx-background-color:#7B5451;
     -fx-padding:3px;
     -fx-text-fill:#ffffff;
     -fx-font-family:Tahoma;
@@ -165,4 +169,14 @@
 
 .clearbutton:hover{
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 0);
+}
+
+.nilaifield{
+    -fx-background-color:white;
+    -fx-background-radius:5px;
+    -fx-border-color:#000;
+    -fx-border-width:.2px;
+    -fx-border-radius:5px;
+    -fx-font-size:13px;
+    -fx-font-family:Tahoma;
 }

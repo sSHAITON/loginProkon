@@ -2,8 +2,13 @@
 
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <?import java.lang.String?>
+<?import java.net.URL?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -86,7 +91,7 @@
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane prefHeight="600.0" prefWidth="656.8" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane prefHeight="600.0" prefWidth="656.8" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="7.0" layoutY="6.0" prefHeight="588.0" prefWidth="642.0" stylesheets="@dashboardstyle.css">
                                  <styleClass>
@@ -280,15 +285,29 @@
                                     <Line endX="515.4000244140625" layoutX="115.0" layoutY="43.0" startX="-114.99998474121094" stroke="#735146" />
                                     <Label layoutX="14.0" layoutY="48.0" text="Nama" textFill="#735146" />
                                     <Label layoutX="169.0" layoutY="48.0" text="NIP" textFill="#735146" />
-                                    <TextField layoutX="14.0" layoutY="66.0" prefHeight="26.0" prefWidth="130.0" styleClass="namefield" stylesheets="@dashboardstyle.css" />
-                                    <TextField layoutX="169.0" layoutY="66.0" prefHeight="26.0" prefWidth="130.0" styleClass="namefield" stylesheets="@dashboardstyle.css" />
-                                    <Label layoutX="15.0" layoutY="105.0" text="Input Mata Pelajaran">
+                                    <TextField layoutX="14.0" layoutY="66.0" prefHeight="26.0" prefWidth="130.0" styleClass="textfield">
+                                       <stylesheets>
+                                          <URL value="@dashboardstyle.css" />
+                                          <URL value="@loginstyle.css" />
+                                       </stylesheets></TextField>
+                                    <TextField layoutX="169.0" layoutY="66.0" prefHeight="26.0" prefWidth="130.0" styleClass="textfield">
+                                       <stylesheets>
+                                          <URL value="@dashboardstyle.css" />
+                                          <URL value="@loginstyle.css" />
+                                       </stylesheets></TextField>
+                                    <Label layoutX="15.0" layoutY="105.0" text="Input Mata Pelajaran" textFill="#735146">
                                        <font>
                                           <Font name="Tahoma Bold" size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="14.0" layoutY="135.0" text="Mata Pelajaran" textFill="#735146" />
-                                    <Label layoutX="169.0" layoutY="135.0" text="Pukul" textFill="#735146" />
+                                    <Label layoutX="14.0" layoutY="135.0" text="Mata Pelajaran" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font></Label>
+                                    <Label layoutX="169.0" layoutY="135.0" text="Pukul" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font></Label>
                                     <Label layoutX="325.0" layoutY="135.0" text="Kelas" textFill="#735146" />
                                     <Label layoutX="478.0" layoutY="135.0" text="Hari" textFill="#735146" />
                                     <ComboBox layoutX="14.0" layoutY="153.0" prefHeight="26.0" prefWidth="130.0" styleClass="choicebox" stylesheets="@dashboardstyle.css" />
@@ -304,6 +323,264 @@
                                     </Button>
                                     <Button layoutX="504.0" layoutY="193.0" mnemonicParsing="false" styleClass="updatebutton" stylesheets="@dashboardstyle.css" text="Update" />
                                     <Button layoutX="373.0" layoutY="193.0" mnemonicParsing="false" styleClass="clearbutton" stylesheets="@dashboardstyle.css" text="Clear" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="600.0" prefWidth="656.8" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="557.0" prefWidth="200.0" stylesheets="@dashboardstyle.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
+                                 <styleClass>
+                                    <String fx:value="whitebg" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <Label layoutX="15.0" layoutY="14.0" text="Search" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontAwesomeIcon fill="#735146" glyphName="SEARCH" />
+                                       </graphic>
+                                    </Label>
+                                    <TextField layoutX="12.0" layoutY="34.0" promptText="Search" style="-fx-border-radius: 5px;" />
+                                    <TextField layoutX="15.0" layoutY="104.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
+                                       <stylesheets>
+                                          <URL value="@dashboardstyle.css" />
+                                          <URL value="@loginstyle.css" />
+                                       </stylesheets>
+                                    </TextField>
+                                    <Label layoutX="15.0" layoutY="145.0" text="NIS" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="15.0" layoutY="169.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
+                                       <stylesheets>
+                                          <URL value="@dashboardstyle.css" />
+                                          <URL value="@loginstyle.css" />
+                                       </stylesheets>
+                                    </TextField>
+                                    <Label layoutX="15.0" layoutY="81.0" text="Nama" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="15.0" layoutY="230.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
+                                       <stylesheets>
+                                          <URL value="@dashboardstyle.css" />
+                                          <URL value="@loginstyle.css" />
+                                       </stylesheets>
+                                    </TextField>
+                                    <Label layoutX="15.0" layoutY="271.0" text="Semester" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="15.0" layoutY="295.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
+                                       <stylesheets>
+                                          <URL value="@dashboardstyle.css" />
+                                          <URL value="@loginstyle.css" />
+                                       </stylesheets>
+                                    </TextField>
+                                    <Label layoutX="15.0" layoutY="207.0" text="Kelas" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="16.0" layoutY="342.0" text="Input Nilai" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox layoutX="15.0" layoutY="395.0" prefHeight="26.0" prefWidth="130.0" styleClass="choicebox" stylesheets="@dashboardstyle.css" />
+                                    <Label layoutX="16.0" layoutY="370.0" text="Mata Pelajaran" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="16.0" layoutY="430.0" text="Nilai" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="16.0" layoutY="454.0" prefHeight="26.0" prefWidth="142.0" styleClass="nilaifield">
+                                       <stylesheets>
+                                          <URL value="@dashboardstyle.css" />
+                                          <URL value="@loginstyle.css" />
+                                       </stylesheets>
+                                    </TextField>
+                                    <Button layoutX="17.0" layoutY="531.0" mnemonicParsing="false" styleClass="clearbutton" stylesheets="@dashboardstyle.css" text="Clear" />
+                                    <Button layoutX="19.0" layoutY="494.0" mnemonicParsing="false" styleClass="addbutton" stylesheets="@dashboardstyle.css" text="Add" />
+                                    <Button layoutX="68.0" layoutY="494.0" mnemonicParsing="false" styleClass="updatebutton" stylesheets="@dashboardstyle.css" text="Update" />
+                                    <Button layoutX="71.0" layoutY="533.0" mnemonicParsing="false" stylesheets="@dashboardstyle.css" text="Delete">
+                                       <styleClass>
+                                          <String fx:value="whitebg" />
+                                          <String fx:value="deletebutton" />
+                                       </styleClass>
+                                    </Button>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane layoutX="228.0" layoutY="21.0" prefHeight="557.0" prefWidth="200.0" stylesheets="@dashboardstyle.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="230.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+                                 <styleClass>
+                                    <String fx:value="whitebg" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <Line endX="515.4000244140625" layoutX="-105.0" layoutY="39.0" startX="106.19999694824219" startY="3.814697265625E-6" stroke="#735146" />
+                                    <Label layoutX="14.0" layoutY="14.0" text="Nilai Rapot" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <TableView layoutX="11.0" layoutY="48.60000000000002" prefHeight="515.0" prefWidth="391.0" AnchorPane.bottomAnchor="7.399999999999977">
+                                      <columns>
+                                        <TableColumn prefWidth="119.20003318786621" text="Mata Pelajaran" />
+                                        <TableColumn prefWidth="75.0" text="KKM" />
+                                          <TableColumn prefWidth="75.0" text="Nilai" />
+                                          <TableColumn prefWidth="120.80000610351561" text="Keterangan" />
+                                      </columns>
+                                    </TableView>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane layoutX="255.0" layoutY="62.0" prefHeight="600.0" prefWidth="656.8" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0" stylesheets="@dashboardstyle.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+                                 <styleClass>
+                                    <String fx:value="whitebg" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <Line endX="752.9999389648438" endY="-3.814697265625E-6" layoutX="-125.0" layoutY="35.0" startX="125.00000762939453" startY="-3.814697265625E-6" stroke="#735146" />
+                                    <Label layoutX="14.0" layoutY="10.0" text="Monitoring Hafalan" textFill="#735146" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="10.0">
+                                       <font>
+                                          <Font name="Tahoma Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="17.0" layoutY="46.0" text="Search" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontAwesomeIcon fill="#735146" glyphName="SEARCH" />
+                                       </graphic>
+                                    </Label>
+                                    <TextField layoutX="14.0" layoutY="66.0" promptText="Search" style="-fx-border-radius: 5px;" />
+                                    <TextField layoutX="17.0" layoutY="122.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
+                                       <stylesheets>
+                                          <URL value="@dashboardstyle.css" />
+                                          <URL value="@loginstyle.css" />
+                                       </stylesheets>
+                                    </TextField>
+                                    <Label layoutX="179.0" layoutY="97.0" text="NIS" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="179.0" layoutY="121.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
+                                       <stylesheets>
+                                          <URL value="@dashboardstyle.css" />
+                                          <URL value="@loginstyle.css" />
+                                       </stylesheets>
+                                    </TextField>
+                                    <Label layoutX="17.0" layoutY="99.0" text="Nama" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="341.0" layoutY="119.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
+                                       <stylesheets>
+                                          <URL value="@dashboardstyle.css" />
+                                          <URL value="@loginstyle.css" />
+                                       </stylesheets>
+                                    </TextField>
+                                    <Label layoutX="342.0" layoutY="96.0" text="Kelas" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="18.0" layoutY="157.0" text="Surat" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="18.0" layoutY="181.0" prefHeight="26.0" prefWidth="142.0" styleClass="nilaifield">
+                                       <stylesheets>
+                                          <URL value="@dashboardstyle.css" />
+                                          <URL value="@loginstyle.css" />
+                                       </stylesheets>
+                                    </TextField>
+                                    <Label layoutX="179.0" layoutY="156.0" text="Banyak ayat" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="179.0" layoutY="180.0" prefHeight="26.0" prefWidth="142.0" styleClass="nilaifield">
+                                       <stylesheets>
+                                          <URL value="@dashboardstyle.css" />
+                                          <URL value="@loginstyle.css" />
+                                       </stylesheets>
+                                    </TextField>
+                                    <Label layoutX="333.0" layoutY="157.0" text="Tanggal" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <DatePicker layoutX="333.0" layoutY="181.0" prefHeight="24.0" prefWidth="170.0" stylesheets="@dashboardstyle.css">
+                                       <styleClass>
+                                          <String fx:value="namefield" />
+                                          <String fx:value="nilaifield" />
+                                       </styleClass>
+                                    </DatePicker>
+                                    <TableView layoutX="17.0" layoutY="230.0" prefHeight="293.0" prefWidth="594.0" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="17.0">
+                                      <columns>
+                                        <TableColumn prefWidth="132.00000648498553" text="Tanggal" />
+                                        <TableColumn prefWidth="106.40003967285156" text="Banyak ayat" />
+                                          <TableColumn prefWidth="354.39998474121103" text="Surat" />
+                                      </columns>
+                                    </TableView>
+                                    <Button layoutX="18.0" layoutY="532.0" mnemonicParsing="false" stylesheets="@dashboardstyle.css" text="Grafik" AnchorPane.bottomAnchor="8.000000000000046" AnchorPane.leftAnchor="18.0">
+                                       <styleClass>
+                                          <String fx:value="navbtn" />
+                                          <String fx:value="logoutbutton" />
+                                       </styleClass>
+                                       <graphic>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="LINE_CHART" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" stylesheets="@dashboardstyle.css" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+                                 <styleClass>
+                                    <String fx:value="whitebg" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <Button layoutX="14.0" layoutY="525.0" mnemonicParsing="false" stylesheets="@dashboardstyle.css" text="Back" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="18.0">
+                                       <styleClass>
+                                          <String fx:value="navbtn" />
+                                          <String fx:value="logoutbutton" />
+                                       </styleClass>
+                                       <graphic>
+                                          <FontAwesomeIcon fill="WHITE" glyphName="ARROW_CIRCLE_LEFT" />
+                                       </graphic>
+                                    </Button>
+                                    <Line endX="758.9999389648438" endY="3.814697265625E-6" layoutX="-129.0" layoutY="35.0" startX="129.3999786376953" startY="3.814697265625E-6" stroke="#735146" />
+                                    <Label text="Grafik Hafalan" textFill="#735146" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="10.0">
+                                       <font>
+                                          <Font name="Tahoma Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <LineChart layoutX="14.0" layoutY="53.0" prefHeight="456.0" prefWidth="599.0">
+                                      <xAxis>
+                                        <CategoryAxis side="BOTTOM" />
+                                      </xAxis>
+                                      <yAxis>
+                                        <NumberAxis label="Banyak Surat" minorTickCount="20" side="LEFT" upperBound="114.0" />
+                                      </yAxis>
+                                    </LineChart>
                                  </children>
                               </AnchorPane>
                            </children>
