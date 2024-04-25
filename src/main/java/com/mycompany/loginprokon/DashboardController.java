@@ -24,6 +24,8 @@ public class DashboardController {
     private Button logoutButton;
     @FXML
     Label nameLabel;
+    
+  
 
     @FXML
     public void displayName(String username) {
@@ -38,17 +40,11 @@ public class DashboardController {
         alert.setContentText("Apakah anda ingin Logout ?");
 
         if (alert.showAndWait().get() == ButtonType.OK) {
-            // Memuat file FXML Primary.fxml
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Primary.fxml"));
             Parent root = loader.load();
-
-            // Membuat scene baru
             Scene scene = new Scene(root);
-
-            // Mengambil stage (jendela) dari event
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-            // Menetapkan scene baru ke stage
             stage.setScene(scene);
             stage.show();
         }
