@@ -1,4 +1,5 @@
 module-info.class
 com\mycompany\loginprokon\App.class
 com\mycompany\loginprokon\DashboardController.class
+com\mycompany\loginprokon\data\DBConnection.class
 com\mycompany\loginprokon\PrimaryController.class

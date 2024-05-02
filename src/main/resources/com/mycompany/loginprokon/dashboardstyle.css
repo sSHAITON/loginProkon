@@ -34,6 +34,12 @@
 }
 
 .navbtn:hover {
+    -fx-background-color: #e3c89188;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
+    
+}
+
+.navbtn-selected {
     -fx-background-color:#735146;
 }
 
@@ -42,7 +48,7 @@
 }
 
 .logoutbutton:hover {
--fx-background-color:#E3C891;;
+-fx-background-color:#E3C891;
 }
 
 .whitebg{

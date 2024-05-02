@@ -4,19 +4,22 @@
  */
 package com.mycompany.loginprokon;
 
+import java.io.IOException;
+
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
-import java.io.IOException;
-import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 public class DashboardController {
 
@@ -24,10 +27,77 @@ public class DashboardController {
     private Button logoutButton;
     @FXML
     Label nameLabel;
+    @FXML
+    private AnchorPane dashboard;
+
+    @FXML
+    private Button dashboardBtn;
+
+    @FXML
+    private StackPane dashboardPane;
+
+    @FXML
+    private Button grafikHafBtn;
+
+    @FXML
+    private AnchorPane jadwal;
+
+    @FXML
+    private Button jadwalBtn;
+
+    @FXML
+    private AnchorPane kalender;
+
+    @FXML
+    private Button kalenderBtn;
+
+    @FXML
+    private AnchorPane monitoringHaf;
+
+    @FXML
+    private Button monitoringHafBtn;
+
+    @FXML
+    private AnchorPane nilaiRapot;
+
+    @FXML
+    private Button nilaiRapotBtn;
+
+    // navbar
+    public void switchForm(ActionEvent event) {
+        dashboard.setVisible(false);
+        jadwal.setVisible(false);
+        kalender.setVisible(false);
+        nilaiRapot.setVisible(false);
+        monitoringHaf.setVisible(false);
+
+        dashboardBtn.getStyleClass().remove("navbtn-selected");
+        jadwalBtn.getStyleClass().remove("navbtn-selected");
+        kalenderBtn.getStyleClass().remove("navbtn-selected");
+        nilaiRapotBtn.getStyleClass().remove("navbtn-selected");
+        monitoringHafBtn.getStyleClass().remove("navbtn-selected");
+
+        if (event.getSource() == dashboardBtn) {
+            dashboard.setVisible(true);
+            dashboardBtn.getStyleClass().add("navbtn-selected");
+        } else if (event.getSource() == jadwalBtn) {
+            jadwal.setVisible(true);
+            jadwalBtn.getStyleClass().add("navbtn-selected");
+        } else if (event.getSource() == kalenderBtn) {
+            kalender.setVisible(true);
+            kalenderBtn.getStyleClass().add("navbtn-selected");
+        } else if (event.getSource() == nilaiRapotBtn) {
+            nilaiRapot.setVisible(true);
+            nilaiRapotBtn.getStyleClass().add("navbtn-selected");
+        } else if (event.getSource() == monitoringHafBtn) {
+            monitoringHaf.setVisible(true);
+            monitoringHafBtn.getStyleClass().add("navbtn-selected");
+        }
+    }
 
     @FXML
     public void displayName(String username) {
-        nameLabel.setText("Selamat Datang, " + username + " !");
+        nameLabel.setText("Selamat Datang, " + username + "!");
     }
 
     public void handleLogoutButtonAction(ActionEvent event) throws IOException {
@@ -47,4 +117,25 @@ public class DashboardController {
             stage.show();
         }
     }
+    // End of navbar
+
+    // Dashboard
+
+    // end of dashboard
+
+    // Jadwal
+
+    // end of jadwal
+
+    // Kalender
+
+    // end of kalender
+
+    // Nilai Rapot
+
+    // end of nilai rapot
+
+    // Monitoring Hafalan
+
+    // end of monitoring hafalan
 }
