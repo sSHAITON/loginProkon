@@ -115,7 +115,7 @@
                                                       <Font name="Tahoma" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <Button contentDisplay="RIGHT" layoutX="20.0" layoutY="82.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="149.0" styleClass="logoutbutton" text="Selengkapnya">
+                                                <Button fx:id="daftarsiswBtn" contentDisplay="RIGHT" layoutX="20.0" layoutY="82.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="31.0" prefWidth="149.0" styleClass="logoutbutton" text="Selengkapnya">
                                                    <graphic>
                                                       <FontAwesomeIcon fill="WHITE" glyphName="ARROW_CIRCLE_RIGHT" />
                                                    </graphic>
@@ -130,7 +130,7 @@
                                                       <Font name="Tahoma" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <Button contentDisplay="RIGHT" layoutX="20.0" layoutY="82.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="149.0" styleClass="logoutbutton" text="Selengkapnya">
+                                                <Button fx:id="daftarguruBtn" contentDisplay="RIGHT" layoutX="20.0" layoutY="82.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="31.0" prefWidth="149.0" styleClass="logoutbutton" text="Selengkapnya">
                                                    <graphic>
                                                       <FontAwesomeIcon fill="WHITE" glyphName="ARROW_CIRCLE_RIGHT" />
                                                    </graphic>
@@ -140,12 +140,12 @@
                                           <AnchorPane layoutX="427.0" layoutY="28.0" prefHeight="110.0" prefWidth="180.0" styleClass="card" stylesheets="@dashboardstyle.css">
                                              <children>
                                                 <FontAwesomeIcon fill="WHITE" glyphName="BOOK" layoutX="14.0" layoutY="68.0" size="35" />
-                                                <Label layoutX="63.0" layoutY="28.0" prefHeight="28.0" prefWidth="90.0" text="DAFTAR" textFill="#fff9f9">
+                                                <Label layoutX="63.0" layoutY="28.0" prefHeight="28.0" prefWidth="90.0" text="JADWAL" textFill="#fff9f9">
                                                    <font>
                                                       <Font name="Tahoma" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <Button contentDisplay="RIGHT" layoutX="20.0" layoutY="82.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="149.0" styleClass="logoutbutton" text="Selengkapnya">
+                                                <Button fx:id="jadwalpelBtn" contentDisplay="RIGHT" layoutX="20.0" layoutY="82.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="31.0" prefWidth="149.0" styleClass="logoutbutton" text="Selengkapnya">
                                                    <graphic>
                                                       <FontAwesomeIcon fill="WHITE" glyphName="ARROW_CIRCLE_RIGHT" />
                                                    </graphic>
@@ -325,6 +325,11 @@
                                     <Button layoutX="373.0" layoutY="193.0" mnemonicParsing="false" styleClass="clearbutton" stylesheets="@dashboardstyle.css" text="Clear" />
                                     <ComboBox layoutX="14.0" layoutY="153.0" prefHeight="26.0" prefWidth="130.0" styleClass="choicebox" stylesheets="@dashboardstyle.css" />
                                     <TimePicker layoutX="169.0" layoutY="153.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="26.0" prefWidth="138.0" />
+                                    <Button layoutX="14.0" layoutY="192.0" mnemonicParsing="false" styleClass="pdfbutton" stylesheets="@dashboardstyle.css" text="PDF">
+                                       <graphic>
+                                          <FontAwesomeIcon fill="#fffcfc" glyphName="FILE_PDF_ALT" />
+                                       </graphic>
+                                    </Button>
                                  </children>
                               </AnchorPane>
                            </children>
@@ -421,6 +426,11 @@
                                           <String fx:value="deletebutton" />
                                        </styleClass>
                                     </Button>
+                                    <Button layoutX="133.0" layoutY="514.0" mnemonicParsing="false" styleClass="pdfbutton" stylesheets="@dashboardstyle.css" text="PDF">
+                                       <graphic>
+                                          <FontAwesomeIcon fill="#fffcfc" glyphName="FILE_PDF_ALT" />
+                                       </graphic>
+                                    </Button>
                                  </children>
                               </AnchorPane>
                               <AnchorPane layoutX="228.0" layoutY="21.0" prefHeight="557.0" prefWidth="200.0" stylesheets="@dashboardstyle.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="230.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
@@ -485,6 +495,11 @@
                                           <String fx:value="whitebg" />
                                           <String fx:value="deletebutton" />
                                        </styleClass>
+                                    </Button>
+                                    <Button layoutX="432.0" layoutY="114.0" mnemonicParsing="false" styleClass="pdfbutton" stylesheets="@dashboardstyle.css" text="PDF">
+                                       <graphic>
+                                          <FontAwesomeIcon fill="#fffcfc" glyphName="FILE_PDF_ALT" />
+                                       </graphic>
                                     </Button>
                                  </children>
                               </AnchorPane>
@@ -595,6 +610,13 @@
                                           <FontAwesomeIcon fill="WHITE" glyphName="LINE_CHART" />
                                        </graphic>
                                     </Button>
+                                    <Button layoutX="558.0" layoutY="536.0" mnemonicParsing="false" styleClass="pdfbutton" stylesheets="@dashboardstyle.css" text="PDF">
+                                       <graphic>
+                                          <FontAwesomeIcon fill="#fffcfc" glyphName="FILE_PDF_ALT" />
+                                       </graphic>
+                                    </Button>
+                                    <Button layoutX="574.0" layoutY="181.0" mnemonicParsing="false" styleClass="addbutton" stylesheets="@dashboardstyle.css" text="add" />
+                                    <Button layoutX="515.0" layoutY="181.0" mnemonicParsing="false" styleClass="deletebutton" stylesheets="@dashboardstyle.css" text="delete" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0" stylesheets="@dashboardstyle.css" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
@@ -626,6 +648,75 @@
                                         <NumberAxis label="Banyak Surat" minorTickCount="20" side="LEFT" upperBound="114.0" />
                                       </yAxis>
                                     </LineChart>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="daftarsiswa" layoutX="211.0" layoutY="150.0" prefHeight="600.0" prefWidth="660.8" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" stylesheets="@dashboardstyle.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+                                 <styleClass>
+                                    <String fx:value="whitebg" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <Label layoutX="14.0" layoutY="54.0" text="Search" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontAwesomeIcon fill="#735146" glyphName="SEARCH" />
+                                       </graphic>
+                                    </Label>
+                                    <TextField layoutX="14.0" layoutY="70.0" promptText="Search" style="-fx-border-radius: 5px;" />
+                                    <Label layoutX="14.0" layoutY="14.0" text="Daftar Siswa" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Line endX="752.9999389648438" endY="-3.814697265625E-6" layoutX="-124.0" layoutY="41.0" startX="125.00000762939453" startY="-3.814697265625E-6" stroke="#735146" />
+                                    <TableView layoutX="14.0" layoutY="105.0" prefHeight="450.0" prefWidth="605.0">
+                                      <columns>
+                                        <TableColumn prefWidth="128.7999973297119" text="NIS" />
+                                        <TableColumn prefWidth="275.19996643066406" text="Nama" />
+                                          <TableColumn prefWidth="67.20001220703125" text="Kelas" />
+                                          <TableColumn prefWidth="136.79989624023438" text="Status" />
+                                      </columns>
+                                    </TableView>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="daftarguru" layoutX="10.0" layoutY="10.0" prefHeight="610.4" prefWidth="671.2" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" stylesheets="@dashboardstyle.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+                                 <styleClass>
+                                    <String fx:value="whitebg" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <Label layoutX="14.0" layoutY="54.0" text="Search" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma" size="12.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontAwesomeIcon fill="#735146" glyphName="SEARCH" />
+                                       </graphic>
+                                    </Label>
+                                    <TextField layoutX="14.0" layoutY="70.0" promptText="Search" style="-fx-border-radius: 5px;" />
+                                    <Label layoutX="14.0" layoutY="14.0" text="Daftar Guru" textFill="#735146">
+                                       <font>
+                                          <Font name="Tahoma Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Line endX="752.9999389648438" endY="-3.814697265625E-6" layoutX="-124.0" layoutY="41.0" startX="125.00000762939453" startY="-3.814697265625E-6" stroke="#735146" />
+                                    <TableView layoutX="14.0" layoutY="105.0" prefHeight="450.0" prefWidth="605.0">
+                                       <columns>
+                                          <TableColumn prefWidth="128.7999973297119" text="NIP" />
+                                          <TableColumn prefWidth="312.00001525878906" text="Nama" />
+                                          <TableColumn prefWidth="165.59988403320312" text="Status" />
+                                       </columns>
+                                    </TableView>
                                  </children>
                               </AnchorPane>
                            </children>

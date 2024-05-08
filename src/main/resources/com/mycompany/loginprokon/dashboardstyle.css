@@ -147,6 +147,21 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 0);
 }
 
+.pdfbutton{
+    -fx-background-color:#ba2740;
+    -fx-cursor:hand;
+    -fx-text-fill:#ffffff;
+    -fx-font-size:12px;
+    -fx-font-family:"Tahoma";
+    -fx-font-type:bold;
+    -fx-alignment:CENTER-LEFT;
+    -fx-background-radius:3px;
+}
+
+.pdfbutton:hover{
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 0);
+}
+
 .updatebutton{
     -fx-background-color:#1a1a85;
     -fx-cursor:hand;

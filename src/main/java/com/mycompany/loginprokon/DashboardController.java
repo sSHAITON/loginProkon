@@ -107,10 +107,26 @@ public class DashboardController {
     @FXML
     private Button deleteBtnKalender;
 
+    @FXML
+    private Button jadwalpelBtn;
+
+    @FXML
+    private AnchorPane daftarguru;
+
+    @FXML
+    private Button daftarguruBtn;
+
+    @FXML
+    private Button daftarsiswBtn;
+
+    @FXML
+    private AnchorPane daftarsiswa;
+
     // inisialisasi method
     // setiap method yang digunakkan masukkan di sini
     public void initialize() {
         initializeKalenderAkademik();
+
     }
 
     // navbar
@@ -120,28 +136,43 @@ public class DashboardController {
         kalender.setVisible(false);
         nilaiRapot.setVisible(false);
         monitoringHaf.setVisible(false);
+        daftarguru.setVisible(false);
+        daftarsiswa.setVisible(false);
 
         dashboardBtn.getStyleClass().remove("navbtn-selected");
         jadwalBtn.getStyleClass().remove("navbtn-selected");
         kalenderBtn.getStyleClass().remove("navbtn-selected");
         nilaiRapotBtn.getStyleClass().remove("navbtn-selected");
         monitoringHafBtn.getStyleClass().remove("navbtn-selected");
+        try {
+            if (event.getSource() == dashboardBtn) {
+                dashboard.setVisible(true);
+                dashboardBtn.getStyleClass().add("navbtn-selected");
+            } else if (event.getSource() == jadwalBtn || event.getSource() == jadwalpelBtn) {
+                jadwal.setVisible(true);
+                jadwalBtn.getStyleClass().add("navbtn-selected");
+            } else if (event.getSource() == kalenderBtn) {
+                kalender.setVisible(true);
+                kalenderBtn.getStyleClass().add("navbtn-selected");
+            } else if (event.getSource() == nilaiRapotBtn) {
+                nilaiRapot.setVisible(true);
+                nilaiRapotBtn.getStyleClass().add("navbtn-selected");
+            } else if (event.getSource() == monitoringHafBtn) {
+                monitoringHaf.setVisible(true);
+                monitoringHafBtn.getStyleClass().add("navbtn-selected");
+            } else if (event.getSource() == daftarguruBtn) {
+                daftarguru.setVisible(true);
+            } else if (event.getSource() == daftarsiswBtn) {
+                daftarsiswa.setVisible(true);
+            }
+        } finally {
+            try {
+                List<Acara> acaraList = AppQuery.loadAcaraFromDatabase();
+                tableViewKalender.getItems().setAll(acaraList);
+            } catch (SQLException el) {
+                System.out.println("Failed to load acara from database: " + el.getMessage());
 
-        if (event.getSource() == dashboardBtn) {
-            dashboard.setVisible(true);
-            dashboardBtn.getStyleClass().add("navbtn-selected");
-        } else if (event.getSource() == jadwalBtn) {
-            jadwal.setVisible(true);
-            jadwalBtn.getStyleClass().add("navbtn-selected");
-        } else if (event.getSource() == kalenderBtn) {
-            kalender.setVisible(true);
-            kalenderBtn.getStyleClass().add("navbtn-selected");
-        } else if (event.getSource() == nilaiRapotBtn) {
-            nilaiRapot.setVisible(true);
-            nilaiRapotBtn.getStyleClass().add("navbtn-selected");
-        } else if (event.getSource() == monitoringHafBtn) {
-            monitoringHaf.setVisible(true);
-            monitoringHafBtn.getStyleClass().add("navbtn-selected");
+            }
         }
     }
 
