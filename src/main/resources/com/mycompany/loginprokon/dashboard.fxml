@@ -350,8 +350,8 @@
                                           <FontAwesomeIcon fill="#735146" glyphName="SEARCH" />
                                        </graphic>
                                     </Label>
-                                    <TextField layoutX="12.0" layoutY="34.0" promptText="Search" style="-fx-border-radius: 5px;" />
-                                    <TextField layoutX="15.0" layoutY="104.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
+                                    <TextField fx:id="searchField" layoutX="12.0" layoutY="34.0" promptText="Search" style="-fx-border-radius: 5px;" />
+                                    <TextField fx:id="namaNilai" layoutX="15.0" layoutY="104.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
                                        <stylesheets>
                                           <URL value="@dashboardstyle.css" />
                                           <URL value="@loginstyle.css" />
@@ -362,7 +362,7 @@
                                           <Font name="Tahoma" size="12.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="15.0" layoutY="169.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
+                                    <TextField fx:id="nisNilai" layoutX="15.0" layoutY="169.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
                                        <stylesheets>
                                           <URL value="@dashboardstyle.css" />
                                           <URL value="@loginstyle.css" />
@@ -373,7 +373,7 @@
                                           <Font name="Tahoma" size="12.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="15.0" layoutY="230.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
+                                    <TextField fx:id="kelasNilai" layoutX="15.0" layoutY="230.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
                                        <stylesheets>
                                           <URL value="@dashboardstyle.css" />
                                           <URL value="@loginstyle.css" />
@@ -384,7 +384,7 @@
                                           <Font name="Tahoma" size="12.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="15.0" layoutY="295.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
+                                    <TextField fx:id="smtNilai" layoutX="15.0" layoutY="295.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
                                        <stylesheets>
                                           <URL value="@dashboardstyle.css" />
                                           <URL value="@loginstyle.css" />
@@ -400,7 +400,7 @@
                                           <Font name="Tahoma Bold" size="12.0" />
                                        </font>
                                     </Label>
-                                    <ComboBox layoutX="15.0" layoutY="395.0" prefHeight="26.0" prefWidth="130.0" styleClass="choicebox" stylesheets="@dashboardstyle.css" />
+                                    <ComboBox fx:id="ComboBoxNilai" layoutX="15.0" layoutY="395.0" prefHeight="26.0" prefWidth="130.0" styleClass="choicebox" stylesheets="@dashboardstyle.css" />
                                     <Label layoutX="16.0" layoutY="370.0" text="Mata Pelajaran" textFill="#735146">
                                        <font>
                                           <Font name="Tahoma" size="12.0" />
@@ -411,22 +411,22 @@
                                           <Font name="Tahoma" size="12.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="16.0" layoutY="454.0" prefHeight="26.0" prefWidth="142.0" styleClass="nilaifield">
+                                    <TextField fx:id="nilaiNilai" layoutX="16.0" layoutY="454.0" prefHeight="26.0" prefWidth="142.0" styleClass="nilaifield">
                                        <stylesheets>
                                           <URL value="@dashboardstyle.css" />
                                           <URL value="@loginstyle.css" />
                                        </stylesheets>
                                     </TextField>
-                                    <Button layoutX="17.0" layoutY="531.0" mnemonicParsing="false" styleClass="clearbutton" stylesheets="@dashboardstyle.css" text="Clear" />
-                                    <Button layoutX="19.0" layoutY="494.0" mnemonicParsing="false" styleClass="addbutton" stylesheets="@dashboardstyle.css" text="Add" />
-                                    <Button layoutX="68.0" layoutY="494.0" mnemonicParsing="false" styleClass="updatebutton" stylesheets="@dashboardstyle.css" text="Update" />
-                                    <Button layoutX="71.0" layoutY="533.0" mnemonicParsing="false" stylesheets="@dashboardstyle.css" text="Delete">
+                                    <Button fx:id="clrBtnNilai" layoutX="17.0" layoutY="531.0" mnemonicParsing="false" styleClass="clearbutton" stylesheets="@dashboardstyle.css" text="Clear" />
+                                    <Button fx:id="addBtnNilai" layoutX="19.0" layoutY="494.0" mnemonicParsing="false" styleClass="addbutton" stylesheets="@dashboardstyle.css" text="Add" />
+                                    <Button fx:id="upBtnNilai" layoutX="68.0" layoutY="494.0" mnemonicParsing="false" styleClass="updatebutton" stylesheets="@dashboardstyle.css" text="Update" />
+                                    <Button fx:id="dltBtnNilai" layoutX="71.0" layoutY="533.0" mnemonicParsing="false" stylesheets="@dashboardstyle.css" text="Delete">
                                        <styleClass>
                                           <String fx:value="whitebg" />
                                           <String fx:value="deletebutton" />
                                        </styleClass>
                                     </Button>
-                                    <Button layoutX="133.0" layoutY="514.0" mnemonicParsing="false" styleClass="pdfbutton" stylesheets="@dashboardstyle.css" text="PDF">
+                                    <Button fx:id="pdfBtnNilai" layoutX="133.0" layoutY="514.0" mnemonicParsing="false" styleClass="pdfbutton" stylesheets="@dashboardstyle.css" text="PDF">
                                        <graphic>
                                           <FontAwesomeIcon fill="#fffcfc" glyphName="FILE_PDF_ALT" />
                                        </graphic>
@@ -445,12 +445,12 @@
                                           <Font name="Tahoma Bold" size="18.0" />
                                        </font>
                                     </Label>
-                                    <TableView layoutX="11.0" layoutY="48.60000000000002" prefHeight="515.0" prefWidth="391.0" AnchorPane.bottomAnchor="7.399999999999977">
+                                    <TableView fx:id="tableViewNilai" layoutX="11.0" layoutY="48.60000000000002" prefHeight="515.0" prefWidth="391.0" AnchorPane.bottomAnchor="7.399999999999977">
                                       <columns>
-                                        <TableColumn prefWidth="119.20003318786621" text="Mata Pelajaran" />
-                                        <TableColumn prefWidth="75.0" text="KKM" />
-                                          <TableColumn prefWidth="75.0" text="Nilai" />
-                                          <TableColumn prefWidth="120.80000610351561" text="Keterangan" />
+                                        <TableColumn fx:id="mapelNilaiColumn" prefWidth="119.20003318786621" text="Mata Pelajaran" />
+                                        <TableColumn fx:id="kkmColumn" prefWidth="75.0" text="KKM" />
+                                          <TableColumn fx:id="nilaiColumn" prefWidth="75.0" text="Nilai" />
+                                          <TableColumn fx:id="ketNilaiColumn" prefWidth="120.80000610351561" text="Keterangan" />
                                       </columns>
                                     </TableView>
                                  </children>
