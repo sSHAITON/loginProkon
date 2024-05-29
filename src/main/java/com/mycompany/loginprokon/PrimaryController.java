@@ -19,7 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.AnchorPane;
 
 public class PrimaryController {
 
@@ -27,7 +27,7 @@ public class PrimaryController {
     private Button loginButton;
 
     @FXML
-    private BorderPane loginPane;
+    private AnchorPane loginPane;
 
     @FXML
     private PasswordField passwordLabel;

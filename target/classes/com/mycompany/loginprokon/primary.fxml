@@ -8,13 +8,13 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane fx:id="loginPane" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.loginprokon.PrimaryController">
-   <left>
-      <AnchorPane prefHeight="550.0" prefWidth="307.0" styleClass="top-side" stylesheets="@loginstyle.css">
+
+<AnchorPane fx:id="loginPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.loginprokon.PrimaryController">
+   <children>
+      <AnchorPane prefHeight="550.0" prefWidth="307.0" styleClass="top-side" stylesheets="@loginstyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <TextField fx:id="usernameLabel" layoutX="78.0" layoutY="244.0" onAction="#loginAdmin" prefHeight="35.0" prefWidth="150.0" promptText="Username" styleClass="textfield" stylesheets="@loginstyle.css" AnchorPane.leftAnchor="78.0" AnchorPane.rightAnchor="80.0">
                <font>
@@ -53,23 +53,17 @@
             </Label>
          </children>
       </AnchorPane>
-   </left>
-   <right>
-      <AnchorPane prefHeight="550.0" prefWidth="634.0" style="-fx-background-color: white;">
+      <AnchorPane layoutX="308.8" prefHeight="600.0" prefWidth="591.0" style="-fx-background-color: #ffffff;" stylesheets="@loginstyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="309.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane layoutX="65.5999984741211" layoutY="74.4000015258789" AnchorPane.bottomAnchor="76.39999999999998" AnchorPane.leftAnchor="65.8" AnchorPane.rightAnchor="108.16169433593745" AnchorPane.topAnchor="74.4">
-               <children>
-                  <ImageView fitHeight="450.0" fitWidth="474.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@img/LogoSD.png" />
-                     </image>
-                     <viewport>
-                        <Rectangle2D />
-                     </viewport>
-                  </ImageView>
-               </children>
-            </AnchorPane>
+            <ImageView fitHeight="450.0" fitWidth="474.0" layoutX="65.0" layoutY="75.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/LogoSD.png" />
+               </image>
+               <viewport>
+                  <Rectangle2D />
+               </viewport>
+            </ImageView>
          </children>
       </AnchorPane>
-   </right>
-</BorderPane>
+   </children>
+</AnchorPane>

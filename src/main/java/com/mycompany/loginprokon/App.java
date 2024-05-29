@@ -49,7 +49,7 @@ public class App extends Application {
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Logout");
-        alert.setHeaderText("Logout");
+        alert.setHeaderText(null);
         alert.setContentText("Apakah anda ingin Logout ?");
 
         if (alert.showAndWait().get() == ButtonType.OK) {

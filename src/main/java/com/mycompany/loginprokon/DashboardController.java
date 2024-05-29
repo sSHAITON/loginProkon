@@ -5,9 +5,14 @@
 package com.mycompany.loginprokon;
 
 import com.mycompany.loginprokon.model.Acara;
+import com.mycompany.loginprokon.model.Jadwal;
+
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
+import com.dlsc.gemsfx.TimePicker;
 import com.dlsc.gemsfx.daterange.DateRange;
 import com.dlsc.gemsfx.daterange.DateRangePicker;
 
@@ -30,6 +35,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -122,10 +129,126 @@ public class DashboardController {
     @FXML
     private AnchorPane daftarsiswa;
 
+    @FXML
+    private Button addBtnJadwal;
+
+    @FXML
+    private ComboBox<String> hariComboBox;
+
+    @FXML
+    private ComboBox<String> jadwalComboBox;
+
+    @FXML
+    private TableView<Jadwal> jumatJadwalTabelView;
+
+    @FXML
+    private TableColumn<Jadwal, String> jumatJadwalTable;
+
+    @FXML
+    private TableColumn<Jadwal, String> jumatKelas;
+
+    @FXML
+    private TableColumn<Jadwal, String> jumatMapel;
+
+    @FXML
+    private TableColumn<Jadwal, String> jumatPukul;
+
+    @FXML
+    private TableView<Jadwal> kamisJadwalTabelView;
+
+    @FXML
+    private TableColumn<Jadwal, String> kamisJadwalTable;
+
+    @FXML
+    private TableColumn<Jadwal, String> kamisKelas;
+
+    @FXML
+    private TableColumn<Jadwal, String> kamisMapel;
+
+    @FXML
+    private TableColumn<Jadwal, String> kamisPukul;
+
+    @FXML
+    private ComboBox<String> kelasComboBox;
+
+    @FXML
+    private TableColumn<Jadwal, String> sabtuKelas;
+
+    @FXML
+    private TextField nipGurujadwal;
+
+    @FXML
+    private Button pdfBtnJadwal;
+
+    @FXML
+    private TimePicker pukulColumn;
+
+    @FXML
+    private TableView<Jadwal> rabuJadwalTabelView;
+
+    @FXML
+    private TableColumn<Jadwal, String> rabuJadwalTable;
+
+    @FXML
+    private TableColumn<Jadwal, String> rabuKelas;
+
+    @FXML
+    private TableColumn<Jadwal, String> rabuMapel;
+
+    @FXML
+    private TableColumn<Jadwal, String> rabuPukul;
+
+    @FXML
+    private TableView<Jadwal> sabtuJadwalTabelView;
+
+    @FXML
+    private TableColumn<Jadwal, String> sabtuJadwalTable;
+
+    @FXML
+    private TableColumn<Jadwal, String> sabtuMapel;
+
+    @FXML
+    private TableColumn<Jadwal, String> sabtuPukul;
+
+    @FXML
+    private TableView<Jadwal> selasaJadwalTabelView;
+
+    @FXML
+    private TableColumn<Jadwal, String> selasaJadwalTable;
+
+    @FXML
+    private TableColumn<Jadwal, String> selasaKelas;
+
+    @FXML
+    private TableColumn<Jadwal, String> selasaMapel;
+
+    @FXML
+    private TableColumn<Jadwal, String> selasaPukul;
+
+    @FXML
+    private TableColumn<Jadwal, String> seninJadwalTable;
+
+    @FXML
+    private TableView<Jadwal> seninJadwalTableView;
+
+    @FXML
+    private TableColumn<Jadwal, String> seninKelas;
+
+    @FXML
+    private TableColumn<Jadwal, String> seninMapel;
+
+    @FXML
+    private TableColumn<Jadwal, String> seninPukul;
+
+    @FXML
+    private Button updateBtnJadwal;
+
     // inisialisasi method
-    // setiap method yang digunakkan masukkan di sini
+    // setiap method yang digunakan masukkan di sini
     public void initialize() {
         initializeKalenderAkademik();
+        initializeJadwalPelajaran();
+        refreshJadwalTable();
 
     }
 
@@ -169,6 +292,7 @@ public class DashboardController {
             try {
                 List<Acara> acaraList = AppQuery.loadAcaraFromDatabase();
                 tableViewKalender.getItems().setAll(acaraList);
+                refreshJadwalTable();
             } catch (SQLException el) {
                 System.out.println("Failed to load acara from database: " + el.getMessage());
 
@@ -185,7 +309,7 @@ public class DashboardController {
 
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Logout");
-        alert.setHeaderText("Logout");
+        alert.setHeaderText(null);
         alert.setContentText("Apakah anda ingin Logout ?");
 
         if (alert.showAndWait().get() == ButtonType.OK) {
@@ -205,7 +329,113 @@ public class DashboardController {
     // end of dashboard
 
     // Jadwal
+    public void initializeJadwalPelajaran() {
+        addItemsToComboBox(hariComboBox, Arrays.asList("Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"));
+        addItemsToComboBox(jadwalComboBox,
+                Arrays.asList("Bahasa Indonesia", "Matematika", "Sejarah Islam"));
+        addItemsToComboBox(kelasComboBox, Arrays.asList("1", "2", "3", "4", "5", "6"));
 
+        pukulColumn.setTime(LocalTime.of(8, 0));
+
+        configureTableColumn(seninJadwalTable, seninKelas, seninMapel, seninPukul);
+        configureTableColumn(selasaJadwalTable, selasaKelas, selasaMapel, selasaPukul);
+        configureTableColumn(rabuJadwalTable, rabuKelas, rabuMapel, rabuPukul);
+        configureTableColumn(kamisJadwalTable, kamisKelas, kamisMapel, kamisPukul);
+        configureTableColumn(jumatJadwalTable, jumatKelas, jumatMapel, jumatPukul);
+        configureTableColumn(sabtuJadwalTable, sabtuKelas, sabtuMapel, sabtuPukul);
+
+        addBtnJadwal.setOnAction(event -> {
+            String hari = hariComboBox.getValue();
+            String jadwal = jadwalComboBox.getValue();
+            String kelas = kelasComboBox.getValue();
+            LocalTime pukul = pukulColumn.getTime();
+
+            if (hari == null || hari.trim().isEmpty() ||
+                    jadwal == null || jadwal.trim().isEmpty() ||
+                    kelas == null || kelas.trim().isEmpty()) {
+
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill in all fields.");
+
+                alert.showAndWait();
+
+                return;
+            }
+
+            String pukulString = pukul.format(DateTimeFormatter.ofPattern("HH:mm"));
+
+            Jadwal jadwalPelajaran = new Jadwal(jadwal, pukulString, kelas, hari);
+
+            try {
+                AppQuery.insertJadwal(jadwalPelajaran);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            // Refresh the table
+            refreshJadwalTable();
+
+        });
+
+    }
+
+    public void refreshJadwalTable() {
+        // Clear the existing items in the table
+        ((TableView<Jadwal>) seninJadwalTable.getTableView()).getItems().clear();
+        ((TableView<Jadwal>) selasaJadwalTable.getTableView()).getItems().clear();
+        ((TableView<Jadwal>) rabuJadwalTable.getTableView()).getItems().clear();
+        ((TableView<Jadwal>) kamisJadwalTable.getTableView()).getItems().clear();
+        ((TableView<Jadwal>) jumatJadwalTable.getTableView()).getItems().clear();
+        ((TableView<Jadwal>) sabtuJadwalTable.getTableView()).getItems().clear();
+
+        List<Jadwal> jadwalList;
+        try {
+            jadwalList = AppQuery.loadJadwalFromDatabase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        for (Jadwal jadwal : jadwalList) {
+            switch (jadwal.getHari()) {
+                case "Senin":
+                    ((TableView<Jadwal>) seninJadwalTable.getTableView()).getItems().add(jadwal);
+                    break;
+                case "Selasa":
+                    ((TableView<Jadwal>) selasaJadwalTable.getTableView()).getItems().add(jadwal);
+                    break;
+                case "Rabu":
+                    ((TableView<Jadwal>) rabuJadwalTable.getTableView()).getItems().add(jadwal);
+                    break;
+                case "Kamis":
+                    ((TableView<Jadwal>) kamisJadwalTable.getTableView()).getItems().add(jadwal);
+                    break;
+                case "Jumat":
+                    ((TableView<Jadwal>) jumatJadwalTable.getTableView()).getItems().add(jadwal);
+                    break;
+                case "Sabtu":
+                    ((TableView<Jadwal>) sabtuJadwalTable.getTableView()).getItems().add(jadwal);
+                    break;
+
+            }
+        }
+    }
+
+    private void configureTableColumn(TableColumn<Jadwal, String> jadwalCol, TableColumn<Jadwal, String> kelasCol,
+            TableColumn<Jadwal, String> mapelCol, TableColumn<Jadwal, String> pukulCol) {
+        jadwalCol.setCellValueFactory(new PropertyValueFactory<>("hari"));
+        kelasCol.setCellValueFactory(new PropertyValueFactory<>("kelas"));
+        mapelCol.setCellValueFactory(new PropertyValueFactory<>("mapel"));
+        pukulCol.setCellValueFactory(new PropertyValueFactory<>("pukul"));
+    }
+
+    private void addItemsToComboBox(ComboBox<String> comboBox, List<String> items) {
+        for (String item : items) {
+            comboBox.getItems().add(item);
+        }
+    }
     // end of jadwal
 
     // Kalender
@@ -228,6 +458,18 @@ public class DashboardController {
             String keteranganAcara = ketAcara.getText();
             String semester = semesterComboBox.getValue();
             DateRange tanggal = tanggalKalenderAkademik.getValue();
+
+            if (keteranganAcara == null || keteranganAcara.trim().isEmpty() ||
+                    semester == null || semester.trim().isEmpty() ||
+                    tanggal == null) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill in all fields");
+
+                alert.showAndWait();
+                return;
+            }
 
             Acara acara = new Acara(keteranganAcara, semester, tanggal);
             tableViewKalender.getItems().add(acara);

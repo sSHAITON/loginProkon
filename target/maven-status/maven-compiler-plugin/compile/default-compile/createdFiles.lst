@@ -3,4 +3,5 @@ com\mycompany\loginprokon\PrimaryController.class
 module-info.class
 com\mycompany\loginprokon\App.class
 com\mycompany\loginprokon\DashboardController.class
+com\mycompany\loginprokon\data\AppQuery.class
 com\mycompany\loginprokon\model\Acara.class

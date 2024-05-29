@@ -12,6 +12,7 @@ import java.util.Locale;
 import com.mycompany.loginprokon.model.Acara;
 import com.dlsc.gemsfx.daterange.DateRange;
 import com.mycompany.loginprokon.data.DBConnection;
+import com.mycompany.loginprokon.model.Jadwal;
 
 public class AppQuery {
 
@@ -65,5 +66,39 @@ public class AppQuery {
 
       pstmt.executeUpdate();
     }
+  }
+
+  public static void insertJadwal(Jadwal jadwal) throws SQLException {
+    String sql = "INSERT INTO jadwal_pelajaran (mapel_jadwal, pukul_jadwal, kelas_jadwal, hari_jadwal) VALUES (?, ?, ?, ?)";
+
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+      pstmt.setString(1, jadwal.getMapel());
+      pstmt.setString(2, jadwal.getPukul());
+      pstmt.setString(3, jadwal.getKelas());
+      pstmt.setString(4, jadwal.getHari());
+
+      pstmt.executeUpdate();
+    }
+  }
+
+  public static List<Jadwal> loadJadwalFromDatabase() throws SQLException {
+    String sql = "SELECT mapel_jadwal, pukul_jadwal, kelas_jadwal, hari_jadwal FROM jadwal_pelajaran";
+    List<Jadwal> jadwalList = new ArrayList<>();
+
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery()) {
+
+      while (rs.next()) {
+        String mapel = rs.getString("mapel_jadwal");
+        String pukul = rs.getString("pukul_jadwal");
+        String kelas = rs.getString("kelas_jadwal");
+        String hari = rs.getString("hari_jadwal");
+
+        Jadwal jadwal = new Jadwal(mapel, pukul, kelas, hari);
+        jadwalList.add(jadwal);
+      }
+    }
+
+    return jadwalList;
   }
 }
