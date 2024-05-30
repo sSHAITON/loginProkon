@@ -587,8 +587,7 @@ public class DashboardController {
             comboBox.getItems().add(item);
         }
     }   
-
-  }
+    
     
     // end of jadwal
 
