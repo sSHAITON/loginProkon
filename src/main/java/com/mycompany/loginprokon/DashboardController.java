@@ -587,8 +587,7 @@ public class DashboardController {
             comboBox.getItems().add(item);
         }
     }   
-    private String getSelectedHari() {
-    return hariComboBox.getValue();
+
   }
     
     // end of jadwal
