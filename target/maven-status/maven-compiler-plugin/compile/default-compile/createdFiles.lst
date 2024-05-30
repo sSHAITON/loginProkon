@@ -1,3 +1,4 @@
+com\mycompany\loginprokon\model\Jadwal.class
 com\mycompany\loginprokon\data\DBConnection.class
 com\mycompany\loginprokon\PrimaryController.class
 module-info.class

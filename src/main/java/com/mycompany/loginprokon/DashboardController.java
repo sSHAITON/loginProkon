@@ -4,6 +4,12 @@
  */
 package com.mycompany.loginprokon;
 
+/**
+ *
+ * @author asepm
+ */
+
+
 import com.mycompany.loginprokon.model.Acara;
 import com.mycompany.loginprokon.model.Jadwal;
 
@@ -42,6 +48,7 @@ import java.util.List;
 
 import com.mycompany.loginprokon.data.AppQuery;
 import com.mycompany.loginprokon.data.DBConnection;
+import javafx.collections.ObservableList;
 
 public class DashboardController {
 
@@ -242,6 +249,12 @@ public class DashboardController {
 
     @FXML
     private Button updateBtnJadwal;
+    
+    @FXML
+    private Button deleteBtnJadwal;
+    
+    @FXML
+    private Button clearBtnJadwal;
 
     // inisialisasi method
     // setiap method yang digunakan masukkan di sini
@@ -249,7 +262,7 @@ public class DashboardController {
         initializeKalenderAkademik();
         initializeJadwalPelajaran();
         refreshJadwalTable();
-
+        
     }
 
     // navbar
@@ -331,8 +344,7 @@ public class DashboardController {
     // Jadwal
     public void initializeJadwalPelajaran() {
         addItemsToComboBox(hariComboBox, Arrays.asList("Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"));
-        addItemsToComboBox(jadwalComboBox,
-                Arrays.asList("Bahasa Indonesia", "Matematika", "Sejarah Islam"));
+        addItemsToComboBox(jadwalComboBox,Arrays.asList("Bahasa Indonesia", "Matematika", "Sejarah Islam"));
         addItemsToComboBox(kelasComboBox, Arrays.asList("1", "2", "3", "4", "5", "6"));
 
         pukulColumn.setTime(LocalTime.of(8, 0));
@@ -378,9 +390,148 @@ public class DashboardController {
             refreshJadwalTable();
 
         });
-
+        
+    deleteBtnJadwal.setOnAction(event -> {
+    Jadwal selectedJadwal = null;
+    TableView<Jadwal> selectedTableView = null;
+    
+      if (seninJadwalTableView.getSelectionModel().getSelectedItem() != null) {
+        selectedJadwal = seninJadwalTableView.getSelectionModel().getSelectedItem();
+        selectedTableView = seninJadwalTableView;
+    } else if (selasaJadwalTabelView.getSelectionModel().getSelectedItem() != null) {
+        selectedJadwal = selasaJadwalTabelView.getSelectionModel().getSelectedItem();
+        selectedTableView = selasaJadwalTabelView;
+    } else if (rabuJadwalTabelView.getSelectionModel().getSelectedItem() != null) {
+        selectedJadwal = rabuJadwalTabelView.getSelectionModel().getSelectedItem();
+        selectedTableView = rabuJadwalTabelView;
+    } else if (kamisJadwalTabelView.getSelectionModel().getSelectedItem() != null) {
+        selectedJadwal = kamisJadwalTabelView.getSelectionModel().getSelectedItem();
+        selectedTableView = kamisJadwalTabelView;
+    } else if (jumatJadwalTabelView.getSelectionModel().getSelectedItem() != null) {
+        selectedJadwal = jumatJadwalTabelView.getSelectionModel().getSelectedItem();
+        selectedTableView = jumatJadwalTabelView;
+    } else if (sabtuJadwalTabelView.getSelectionModel().getSelectedItem() != null) {
+        selectedJadwal = sabtuJadwalTabelView.getSelectionModel().getSelectedItem();
+        selectedTableView = sabtuJadwalTabelView;
     }
 
+    if (selectedJadwal != null && selectedTableView != null) {
+        selectedTableView.getItems().remove(selectedJadwal);
+        try {
+            AppQuery.deleteJadwal(selectedJadwal);
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Success");
+            alert.setHeaderText(null);
+            alert.setContentText("Schedule deleted successfully.");
+            alert.showAndWait();
+        } catch (SQLException e) {
+            System.out.println("Failed to delete jadwal: " + e.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Database Error");
+            alert.setHeaderText(null);
+            alert.setContentText("An error occurred while deleting the schedule.");
+            alert.showAndWait();
+        }
+    } else {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("No Selection");
+        alert.setHeaderText(null);
+        alert.setContentText("Please select a schedule to delete.");
+        alert.showAndWait();
+    }
+});
+  
+    clearBtnJadwal.setOnAction(event -> {
+    try {
+        AppQuery.clearJadwal(); 
+        refreshJadwalTable(); 
+    } catch (SQLException e) {
+        e.printStackTrace();
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText("An error occurred while clear the schedule: " + e.getMessage());
+        alert.showAndWait();
+        }
+     });
+    
+    updateBtnJadwal.setOnAction(event -> {
+    Jadwal selectedJadwal = null;
+    TableView<Jadwal> selectedTableView = null;
+    
+      if (seninJadwalTableView.getSelectionModel().getSelectedItem() != null) {
+        selectedJadwal = seninJadwalTableView.getSelectionModel().getSelectedItem();
+        selectedTableView = seninJadwalTableView;
+    } else if (selasaJadwalTabelView.getSelectionModel().getSelectedItem() != null) {
+        selectedJadwal = selasaJadwalTabelView.getSelectionModel().getSelectedItem();
+        selectedTableView = selasaJadwalTabelView;
+    } else if (rabuJadwalTabelView.getSelectionModel().getSelectedItem() != null) {
+        selectedJadwal = rabuJadwalTabelView.getSelectionModel().getSelectedItem();
+        selectedTableView = rabuJadwalTabelView;
+    } else if (kamisJadwalTabelView.getSelectionModel().getSelectedItem() != null) {
+        selectedJadwal = kamisJadwalTabelView.getSelectionModel().getSelectedItem();
+        selectedTableView = kamisJadwalTabelView;
+    } else if (jumatJadwalTabelView.getSelectionModel().getSelectedItem() != null) {
+        selectedJadwal = jumatJadwalTabelView.getSelectionModel().getSelectedItem();
+        selectedTableView = jumatJadwalTabelView;
+    } else if (sabtuJadwalTabelView.getSelectionModel().getSelectedItem() != null) {
+        selectedJadwal = sabtuJadwalTabelView.getSelectionModel().getSelectedItem();
+        selectedTableView = sabtuJadwalTabelView;
+    }
+
+    if (selectedJadwal != null && selectedTableView != null) {
+        String newHari = hariComboBox.getValue();
+        String newJadwal = jadwalComboBox.getValue();
+        String newKelas = kelasComboBox.getValue();
+        LocalTime newPukul = pukulColumn.getTime();
+
+        if (newHari == null || newHari.trim().isEmpty() ||
+                newJadwal == null || newJadwal.trim().isEmpty() ||
+                newKelas == null || newKelas.trim().isEmpty() ||
+                newPukul == null) {
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Please fill in all fields.");
+            alert.showAndWait();
+            return;
+        }
+
+        String newPukulString = newPukul.format(DateTimeFormatter.ofPattern("HH:mm"));
+        Jadwal newJadwalPelajaran = new Jadwal(newJadwal, newPukulString, newKelas, newHari);
+
+        try {
+            AppQuery.updateJadwal(selectedJadwal, newJadwalPelajaran);
+
+            // Update jadwal di TableView
+            selectedTableView.getItems().set(selectedTableView.getItems().indexOf(selectedJadwal), newJadwalPelajaran);
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Success");
+            alert.setHeaderText(null);
+            alert.setContentText("Schedule updated successfully.");
+            alert.showAndWait();
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Database Error");
+            alert.setHeaderText(null);
+            alert.setContentText("An error occurred while updating the schedule.");
+            alert.showAndWait();
+        }
+    } else {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("No Selection");
+        alert.setHeaderText(null);
+        alert.setContentText("Please select a schedule to update.");
+        alert.showAndWait();
+    }
+  });
+}
+    
     public void refreshJadwalTable() {
         // Clear the existing items in the table
         ((TableView<Jadwal>) seninJadwalTable.getTableView()).getItems().clear();
@@ -424,7 +575,7 @@ public class DashboardController {
     }
 
     private void configureTableColumn(TableColumn<Jadwal, String> jadwalCol, TableColumn<Jadwal, String> kelasCol,
-            TableColumn<Jadwal, String> mapelCol, TableColumn<Jadwal, String> pukulCol) {
+        TableColumn<Jadwal, String> mapelCol, TableColumn<Jadwal, String> pukulCol) {
         jadwalCol.setCellValueFactory(new PropertyValueFactory<>("hari"));
         kelasCol.setCellValueFactory(new PropertyValueFactory<>("kelas"));
         mapelCol.setCellValueFactory(new PropertyValueFactory<>("mapel"));
@@ -435,7 +586,11 @@ public class DashboardController {
         for (String item : items) {
             comboBox.getItems().add(item);
         }
-    }
+    }   
+    private String getSelectedHari() {
+    return hariComboBox.getValue();
+  }
+    
     // end of jadwal
 
     // Kalender
