@@ -101,4 +101,47 @@ public class AppQuery {
 
     return jadwalList;
   }
+  
+  public static void deleteJadwal(Jadwal jadwal) throws SQLException {
+    String sql = "DELETE FROM jadwal_pelajaran WHERE mapel_jadwal = ? AND pukul_jadwal = ? AND kelas_jadwal = ? AND hari_jadwal = ?";
+    
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+        pstmt.setString(1, jadwal.getMapel());
+        pstmt.setString(2, jadwal.getPukul());
+        pstmt.setString(3, jadwal.getKelas());
+        pstmt.setString(4, jadwal.getHari());
+        
+        pstmt.executeUpdate();
+        }
+    }
+  
+    public static void clearJadwal() throws SQLException {
+      String sql = "DELETE FROM jadwal_pelajaran";
+
+      try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+          int affectedRows = pstmt.executeUpdate();
+          System.out.println("Deleted " + affectedRows + " nilai records.");pstmt.executeUpdate();
+      }
+  }
+    
+    public static void updateJadwal(Jadwal oldJadwal, Jadwal newJadwal) throws SQLException {
+    String sql = "UPDATE jadwal_pelajaran SET mapel_jadwal = ?, pukul_jadwal = ?, kelas_jadwal = ?, hari_jadwal = ? " +
+                 "WHERE mapel_jadwal = ? AND pukul_jadwal = ? AND kelas_jadwal = ? AND hari_jadwal = ?";
+
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+        // Set new values
+        pstmt.setString(1, newJadwal.getMapel());
+        pstmt.setString(2, newJadwal.getPukul());
+        pstmt.setString(3, newJadwal.getKelas());
+        pstmt.setString(4, newJadwal.getHari());
+
+        // Set old values
+        pstmt.setString(5, oldJadwal.getMapel());
+        pstmt.setString(6, oldJadwal.getPukul());
+        pstmt.setString(7, oldJadwal.getKelas());
+        pstmt.setString(8, oldJadwal.getHari());
+
+        pstmt.executeUpdate();
+    }
+  }
 }

@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+
 module com.mycompany.loginprokon {
     requires javafx.controls;
     requires javafx.fxml;
