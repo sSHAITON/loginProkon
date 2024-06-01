@@ -256,6 +256,15 @@ public class DashboardController {
     @FXML
     private Button clearBtnJadwal;
 
+    @FXML
+    private Label nameLabel1;
+
+    @FXML
+    private Label NIPLabel;
+
+    @FXML
+    private TextField namaGurujadwal;
+
     // inisialisasi method
     // setiap method yang digunakan masukkan di sini
     public void initialize() {
@@ -316,8 +325,11 @@ public class DashboardController {
     }
 
     @FXML
-    public void displayName(String username) {
-        nameLabel.setText("Selamat Datang, " + username + "!");
+    public void displayName(String namaGuru, int NIP) {
+        nameLabel.setText("Selamat Datang, " + namaGuru + "!");
+        nameLabel1.setText(namaGuru);
+        NIPLabel.setText(String.valueOf(NIP));
+
     }
 
     public void handleLogoutButtonAction(ActionEvent event) throws IOException {
@@ -347,6 +359,13 @@ public class DashboardController {
     public class JadwalController {
         private Jadwal selectedJadwal = null;
         private TableView<Jadwal> selectedTableView = null;
+
+        @FXML
+        public void displayNamejadwal(String namaGuru, int NIP) {
+            namaGurujadwal.setText(namaGuru);
+            nipGurujadwal.setText(String.valueOf(NIP));
+
+        }
 
         public void initializeJadwalPelajaran() {
             addItemsToComboBox(hariComboBox, Arrays.asList("Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"));
@@ -507,6 +526,7 @@ public class DashboardController {
                 } finally {
                     selectedJadwal = null;
                     selectedTableView = null;
+                    refreshJadwalTable();
                 }
             } else {
                 Alert alert = new Alert(Alert.AlertType.WARNING);

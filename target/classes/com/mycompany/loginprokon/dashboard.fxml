@@ -35,12 +35,12 @@
                            <children>
                               <Line endX="100.0" layoutX="122.0" layoutY="178.0" startX="-100.0" stroke="#735146" />
                               <FontAwesomeIcon fill="WHITE" glyphName="USER" layoutX="94.0" layoutY="101.0" selectionFill="#7e5131" selectionStart="0" size="70px" text="" />
-                              <Label layoutX="95.0" layoutY="120.0" text="Name" textAlignment="RIGHT" textFill="WHITE">
+                              <Label fx:id="nameLabel1" layoutX="3.2" layoutY="120.0" prefHeight="23.0" prefWidth="234.0" text="Name" textAlignment="RIGHT" textFill="WHITE" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
                                  <font>
                                     <Font name="Tahoma Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="109.0" layoutY="143.0" prefHeight="18.0" prefWidth="24.0" text="NIP" textAlignment="CENTER" textFill="WHITE">
+                              <Label fx:id="NIPLabel" layoutX="109.0" layoutY="143.0" prefHeight="18.0" prefWidth="24.0" text="NIP" textAlignment="CENTER" textFill="WHITE" AnchorPane.leftAnchor="95.2" AnchorPane.rightAnchor="95.2">
                                  <font>
                                     <Font name="Tahoma" size="13.0" />
                                  </font>

@@ -1,5 +1,6 @@
 package com.mycompany.loginprokon;
 
+import com.mycompany.loginprokon.DashboardController.JadwalController;
 import com.mycompany.loginprokon.data.DBConnection;
 import java.io.IOException;
 import javafx.event.ActionEvent;
@@ -47,20 +48,21 @@ public class PrimaryController {
     private ResultSet result;
 
     public void loginAdmin(ActionEvent event) {
-        String sql = "SELECT * FROM admin WHERE username = ? and password = ?";
+        String sql = "SELECT admin.*, guru.Nama, guru.NIP FROM admin JOIN guru ON admin.NIP = guru.NIP WHERE admin.username = ? AND admin.password = ?";
         Connection con = DBConnection.getDBConn();
 
         try {
             Alert alert;
             String username = usernameLabel.getText();
+            String password = passwordLabel.getText();
 
             prepare = con.prepareStatement(sql);
-            prepare.setString(1, usernameLabel.getText());
-            prepare.setString(2, passwordLabel.getText());
+            prepare.setString(1, username);
+            prepare.setString(2, password);
 
             result = prepare.executeQuery();
 
-            if (username.isEmpty() || passwordLabel.getText().isEmpty()) {
+            if (username.isEmpty() || password.isEmpty()) {
                 alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText(null);
@@ -68,6 +70,9 @@ public class PrimaryController {
                 alert.showAndWait();
             } else {
                 if (result.next()) {
+                    String namaGuru = result.getString("Nama");
+                    int nip = result.getInt("NIP");
+
                     // Dashboard
                     alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Information");
@@ -80,7 +85,11 @@ public class PrimaryController {
                     Parent root = loader.load();
 
                     DashboardController dashboardController = loader.getController();
-                    dashboardController.displayName(username);
+                    dashboardController.displayName(namaGuru, nip);
+
+                    DashboardController.JadwalController jadwalController = dashboardController.new JadwalController();
+                    jadwalController.displayNamejadwal(namaGuru, nip);
+
                     Scene scene = new Scene(root);
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     double width = 920;
