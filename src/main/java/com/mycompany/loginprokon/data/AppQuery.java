@@ -13,6 +13,8 @@ import com.mycompany.loginprokon.model.Acara;
 import com.dlsc.gemsfx.daterange.DateRange;
 import com.mycompany.loginprokon.data.DBConnection;
 import com.mycompany.loginprokon.model.Jadwal;
+import com.mycompany.loginprokon.model.Siswa;
+import com.mycompany.loginprokon.model.Guru;
 
 public class AppQuery {
 
@@ -101,47 +103,135 @@ public class AppQuery {
 
     return jadwalList;
   }
-  
+
   public static void deleteJadwal(Jadwal jadwal) throws SQLException {
     String sql = "DELETE FROM jadwal_pelajaran WHERE mapel_jadwal = ? AND pukul_jadwal = ? AND kelas_jadwal = ? AND hari_jadwal = ?";
-    
-    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
-        pstmt.setString(1, jadwal.getMapel());
-        pstmt.setString(2, jadwal.getPukul());
-        pstmt.setString(3, jadwal.getKelas());
-        pstmt.setString(4, jadwal.getHari());
-        
-        pstmt.executeUpdate();
-        }
-    }
-  
-    public static void clearJadwal() throws SQLException {
-      String sql = "DELETE FROM jadwal_pelajaran";
 
-      try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
-          int affectedRows = pstmt.executeUpdate();
-          System.out.println("Deleted " + affectedRows + " nilai records.");pstmt.executeUpdate();
-      }
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+      pstmt.setString(1, jadwal.getMapel());
+      pstmt.setString(2, jadwal.getPukul());
+      pstmt.setString(3, jadwal.getKelas());
+      pstmt.setString(4, jadwal.getHari());
+
+      pstmt.executeUpdate();
+    }
   }
-    
-    public static void updateJadwal(Jadwal oldJadwal, Jadwal newJadwal) throws SQLException {
+
+  public static void clearJadwal() throws SQLException {
+    String sql = "DELETE FROM jadwal_pelajaran";
+
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+      int affectedRows = pstmt.executeUpdate();
+      System.out.println("Deleted " + affectedRows + " nilai records.");
+      pstmt.executeUpdate();
+    }
+  }
+
+  public static void updateJadwal(Jadwal oldJadwal, Jadwal newJadwal) throws SQLException {
     String sql = "UPDATE jadwal_pelajaran SET mapel_jadwal = ?, pukul_jadwal = ?, kelas_jadwal = ?, hari_jadwal = ? " +
-                 "WHERE mapel_jadwal = ? AND pukul_jadwal = ? AND kelas_jadwal = ? AND hari_jadwal = ?";
+        "WHERE mapel_jadwal = ? AND pukul_jadwal = ? AND kelas_jadwal = ? AND hari_jadwal = ?";
 
     try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
-        // Set new values
-        pstmt.setString(1, newJadwal.getMapel());
-        pstmt.setString(2, newJadwal.getPukul());
-        pstmt.setString(3, newJadwal.getKelas());
-        pstmt.setString(4, newJadwal.getHari());
+      // Set new values
+      pstmt.setString(1, newJadwal.getMapel());
+      pstmt.setString(2, newJadwal.getPukul());
+      pstmt.setString(3, newJadwal.getKelas());
+      pstmt.setString(4, newJadwal.getHari());
 
-        // Set old values
-        pstmt.setString(5, oldJadwal.getMapel());
-        pstmt.setString(6, oldJadwal.getPukul());
-        pstmt.setString(7, oldJadwal.getKelas());
-        pstmt.setString(8, oldJadwal.getHari());
+      // Set old values
+      pstmt.setString(5, oldJadwal.getMapel());
+      pstmt.setString(6, oldJadwal.getPukul());
+      pstmt.setString(7, oldJadwal.getKelas());
+      pstmt.setString(8, oldJadwal.getHari());
 
-        pstmt.executeUpdate();
+      pstmt.executeUpdate();
     }
   }
+
+  public static List<Siswa> loadSiswaFromDatabase(String query) throws SQLException {
+    List<Siswa> matchingSiswa = new ArrayList<>();
+    String sql = "SELECT * FROM siswa WHERE NIS LIKE ?";
+
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+      pstmt.setString(1, query + "%");
+
+      ResultSet rs = pstmt.executeQuery();
+
+      while (rs.next()) {
+        int NIS = rs.getInt("NIS");
+        String Nama = rs.getString("Nama");
+        String Kelas = rs.getString("Kelas");
+        String Status = rs.getString("Status");
+
+        Siswa siswa = new Siswa(NIS, Nama, Kelas, Status);
+        matchingSiswa.add(siswa);
+      }
+    }
+
+    return matchingSiswa;
+  }
+
+  public static List<Siswa> loadAllSiswaFromDatabase() throws SQLException {
+    List<Siswa> allSiswa = new ArrayList<>();
+    String sql = "SELECT NIS, Nama, Kelas, Status FROM siswa";
+
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+      ResultSet rs = pstmt.executeQuery();
+
+      while (rs.next()) {
+        int NIS = rs.getInt("NIS");
+        String Nama = rs.getString("Nama");
+        String Kelas = rs.getString("Kelas");
+        String Status = rs.getString("Status");
+
+        Siswa siswa = new Siswa(NIS, Nama, Kelas, Status);
+        allSiswa.add(siswa);
+      }
+    }
+
+    return allSiswa;
+  }
+
+  public static List<Guru> loadGuruFromDatabase(String query) throws SQLException {
+    List<Guru> matchingGuru = new ArrayList<>();
+    String sql = "SELECT NIP, Nama, Status FROM guru WHERE NIP LIKE ?";
+
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+      pstmt.setString(1, query + "%");
+
+      ResultSet rs = pstmt.executeQuery();
+
+      while (rs.next()) {
+        String NIP = rs.getString("NIP");
+        String Nama = rs.getString("Nama");
+        String Status = rs.getString("Status");
+
+        Guru guru = new Guru(NIP, Nama, Status);
+        matchingGuru.add(guru);
+      }
+    }
+
+    return matchingGuru;
+  }
+
+  public static List<Guru> loadAllGuruFromDatabase() throws SQLException {
+    List<Guru> allGuru = new ArrayList<>();
+    String sql = "SELECT NIP, Nama, Status FROM guru";
+
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+      ResultSet rs = pstmt.executeQuery();
+
+      while (rs.next()) {
+        String NIP = rs.getString("NIP");
+        String Nama = rs.getString("Nama");
+        String Status = rs.getString("Status");
+
+        Guru guru = new Guru(NIP, Nama, Status);
+        allGuru.add(guru);
+      }
+    }
+
+    return allGuru;
+  }
+
 }

@@ -11,6 +11,8 @@ package com.mycompany.loginprokon;
 
 import com.mycompany.loginprokon.model.Acara;
 import com.mycompany.loginprokon.model.Jadwal;
+import com.mycompany.loginprokon.model.Siswa;
+import com.mycompany.loginprokon.model.Guru;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -49,6 +51,8 @@ import java.util.List;
 import com.mycompany.loginprokon.data.AppQuery;
 import com.mycompany.loginprokon.data.DBConnection;
 import javafx.collections.ObservableList;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 
 public class DashboardController {
 
@@ -265,9 +269,44 @@ public class DashboardController {
     @FXML
     private TextField namaGurujadwal;
 
+    @FXML
+    private TableView<Siswa> tableviewSiswa;
+
+    @FXML
+    private TableColumn<Siswa, String> nisSiswacolumndashboard;
+
+    @FXML
+    private TableColumn<Siswa, String> namaSiswacolumndashboard;
+
+    @FXML
+    private TableColumn<Siswa, String> kelasSiswacolumndashboard;
+
+    @FXML
+    private TableColumn<Siswa, String> statusSiswacolumndashboard;
+
+    @FXML
+    private TextField searchfieldSiswadashboard;
+
+    @FXML
+    private TableView<Guru> tableviewGuru;
+
+    @FXML
+    private TableColumn<Guru, String> nipGurucolumndashboard;
+
+    @FXML
+    private TableColumn<Guru, String> namaGurucolumndashboard;
+
+    @FXML
+    private TableColumn<Guru, String> statusGurucolumndashboard;
+
+    @FXML
+    private TextField searchfieldGurudashboard;
+
     // inisialisasi method
     // setiap method yang digunakan masukkan di sini
     public void initialize() {
+        initializeTableSiswa();
+        initializeTableGuru();
         initializeKalenderAkademik();
         JadwalController jadwalController = new JadwalController();
         jadwalController.initializeJadwalPelajaran();
@@ -317,6 +356,10 @@ public class DashboardController {
                 tableViewKalender.getItems().setAll(acaraList);
                 JadwalController jadwalcontroller = new JadwalController();
                 jadwalcontroller.refreshJadwalTable();
+                List<Siswa> siswaList = AppQuery.loadAllSiswaFromDatabase();
+                tableviewSiswa.getItems().setAll(siswaList);
+                List<Guru> guruList = AppQuery.loadAllGuruFromDatabase();
+                tableviewGuru.getItems().setAll(guruList);
             } catch (SQLException el) {
                 System.out.println("Failed to load acara from database: " + el.getMessage());
 
@@ -352,6 +395,87 @@ public class DashboardController {
     // End of navbar
 
     // Dashboard
+
+    public void initializeTableSiswa() {
+        nisSiswacolumndashboard.setCellValueFactory(new PropertyValueFactory<>("NIS"));
+        namaSiswacolumndashboard.setCellValueFactory(new PropertyValueFactory<>("Nama"));
+        kelasSiswacolumndashboard.setCellValueFactory(new PropertyValueFactory<>("Kelas"));
+        statusSiswacolumndashboard.setCellValueFactory(new PropertyValueFactory<>("Status"));
+
+        loadAllSiswaToTable();
+
+        autocompletetextFieldsiswa();
+    }
+
+    public void loadAllSiswaToTable() {
+        try {
+            List<Siswa> siswaList = AppQuery.loadAllSiswaFromDatabase();
+            tableviewSiswa.getItems().setAll(siswaList);
+        } catch (SQLException e) {
+            System.out.println("Failed to load siswa from database: " + e.getMessage());
+        }
+    }
+
+    public void autocompletetextFieldsiswa() {
+        PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
+        searchfieldSiswadashboard.textProperty().addListener((observable, oldValue, newValue) -> {
+            pause.setOnFinished(event -> {
+                tableviewSiswa.getItems().clear();
+                try {
+                    List<Siswa> siswaList;
+                    if (newValue.isEmpty()) {
+                        siswaList = AppQuery.loadAllSiswaFromDatabase();
+                    } else {
+                        siswaList = AppQuery.loadSiswaFromDatabase(newValue);
+                    }
+                    tableviewSiswa.getItems().setAll(siswaList);
+                } catch (SQLException e) {
+                    System.out.println("Failed to load siswa from database: " + e.getMessage());
+                }
+            });
+            pause.playFromStart();
+        });
+    }
+
+    public void initializeTableGuru() {
+        nipGurucolumndashboard.setCellValueFactory(new PropertyValueFactory<>("NIP"));
+        namaGurucolumndashboard.setCellValueFactory(new PropertyValueFactory<>("Nama"));
+        statusGurucolumndashboard.setCellValueFactory(new PropertyValueFactory<>("Status"));
+
+        loadAllGuruToTable();
+
+        autocompleteTextFieldGuru();
+    }
+
+    public void loadAllGuruToTable() {
+        try {
+            List<Guru> guruList = AppQuery.loadAllGuruFromDatabase();
+            tableviewGuru.getItems().setAll(guruList);
+        } catch (SQLException e) {
+            System.out.println("Failed to load guru from database: " + e.getMessage());
+        }
+    }
+
+    public void autocompleteTextFieldGuru() {
+        PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
+        searchfieldGurudashboard.textProperty().addListener((observable, oldValue, newValue) -> {
+            pause.setOnFinished(event -> {
+                tableviewGuru.getItems().clear();
+                try {
+                    List<Guru> guruList;
+                    if (newValue.isEmpty()) {
+                        guruList = AppQuery.loadAllGuruFromDatabase();
+                    } else {
+                        guruList = AppQuery.loadGuruFromDatabase(newValue);
+                    }
+                    tableviewGuru.getItems().setAll(guruList);
+                } catch (SQLException e) {
+                    System.out.println("Failed to load guru from database: " + e.getMessage());
+                }
+            });
+            pause.playFromStart();
+        });
+    }
 
     // end of dashboard
 
