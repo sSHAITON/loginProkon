@@ -40,6 +40,9 @@ import com.mycompany.loginprokon.data.DBConnection;
 public class DashboardController {
 
     @FXML
+    private Label labelUser;     
+    
+    @FXML
     private Button logoutButton;
 
     @FXML
@@ -326,8 +329,8 @@ public class DashboardController {
             String semester = smtNilai.getText();
             String mataPelajaran = ComboBoxNilai.getValue();
             String nilaiSiswa = nilaiNilai.getText();
-            String kkmSiswa = "75"; // Ubah dengan nilai yang sesuai
-            String ketSiswa = "Hebat"; // Ubah dengan nilai yang sesuai
+            String kkmSiswa = "75";
+            String ketSiswa = "Hebat";
 
             Nilai nilai = new Nilai(nama, nis, semester, mataPelajaran, nilaiSiswa, kkmSiswa, ketSiswa);
 

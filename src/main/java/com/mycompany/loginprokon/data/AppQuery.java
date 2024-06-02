@@ -166,5 +166,5 @@ public class AppQuery {
         }
     }
     return filteredNilaiList;
-}
+   }
 }
