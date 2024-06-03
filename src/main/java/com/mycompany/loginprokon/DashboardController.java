@@ -11,6 +11,7 @@ package com.mycompany.loginprokon;
 
 import com.mycompany.loginprokon.model.Acara;
 import com.mycompany.loginprokon.model.Jadwal;
+import com.mycompany.loginprokon.model.Nilai;
 import com.mycompany.loginprokon.model.Siswa;
 import com.mycompany.loginprokon.model.Guru;
 
@@ -47,6 +48,7 @@ import javafx.stage.Stage;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.mycompany.loginprokon.data.AppQuery;
 import com.mycompany.loginprokon.data.DBConnection;
@@ -302,12 +304,61 @@ public class DashboardController {
     @FXML
     private TextField searchfieldGurudashboard;
 
+    @FXML
+    private TextField namaNilai;
+
+    @FXML
+    private TextField nisNilai;
+
+    @FXML
+    private TextField smtNilai;
+
+    @FXML
+    private TextField nilaiNilai;
+
+    @FXML
+    private Button addBtnNilai;
+
+    @FXML
+    private Button upBtnNilai;
+
+    @FXML
+    private Button clrBtnNilai;
+
+    @FXML
+    private Button dltBtnNilai;
+
+    @FXML
+    private Button pdfBtnNilai;
+
+    @FXML
+    private ComboBox<String> ComboBoxNilai;
+
+    @FXML
+    private TableColumn<Nilai, String> ketNilaiColumn;
+
+    @FXML
+    private TableColumn<Nilai, String> kkmColumn;
+
+    @FXML
+    private TableColumn<Nilai, String> nilaiColumn;
+
+    @FXML
+    private TableColumn<Nilai, String> mapelNilaiColumn;
+
+    @FXML
+    private TableView<Nilai> tableViewNilai;
+
+    @FXML
+    private TextField searchField;
+
     // inisialisasi method
     // setiap method yang digunakan masukkan di sini
     public void initialize() {
         initializeTableSiswa();
         initializeTableGuru();
         initializeKalenderAkademik();
+        initializeNilai();
         JadwalController jadwalController = new JadwalController();
         jadwalController.initializeJadwalPelajaran();
         jadwalController.refreshJadwalTable();
@@ -360,6 +411,8 @@ public class DashboardController {
                 tableviewSiswa.getItems().setAll(siswaList);
                 List<Guru> guruList = AppQuery.loadAllGuruFromDatabase();
                 tableviewGuru.getItems().setAll(guruList);
+                List<Nilai> nilaiList = AppQuery.loadNilaiFromDatabase("");
+                tableViewNilai.getItems().setAll(nilaiList);
             } catch (SQLException el) {
                 System.out.println("Failed to load acara from database: " + el.getMessage());
 
@@ -776,6 +829,113 @@ public class DashboardController {
     // end of kalender
 
     // Nilai Rapot
+
+    public void initializeNilai() {
+        ComboBoxNilai.getItems().add("Tajwid");
+        ComboBoxNilai.getItems().add("Hafalan Surat Pendek");
+        ComboBoxNilai.getItems().add("Sejarah Kebudayaan Islam");
+        mapelNilaiColumn.setCellValueFactory(new PropertyValueFactory<>("mataPelajaran"));
+        ketNilaiColumn.setCellValueFactory(new PropertyValueFactory<>("ketSiswa"));
+        nilaiColumn.setCellValueFactory(new PropertyValueFactory<>("nilaiSiswa"));
+        kkmColumn.setCellValueFactory(new PropertyValueFactory<>("kkmSiswa"));
+
+        // Fungsi untuk menginisialisasi data nilai dari database dan mengatur aksi
+        // untuk tombol tambah dan hapus nilai
+        try {
+            List<Nilai> nilaiList = AppQuery.loadNilaiFromDatabase(""); // Empty string for no initial filter
+            tableViewNilai.getItems().setAll(nilaiList);
+        } catch (SQLException e) {
+            System.out.println("Failed to load nilai from database: " + e.getMessage());
+        }
+
+        addBtnNilai.setOnAction(event -> {
+            String nama = namaNilai.getText();
+            String nis = nisNilai.getText();
+            String semester = smtNilai.getText();
+            String mataPelajaran = ComboBoxNilai.getValue();
+            String nilaiSiswa = nilaiNilai.getText();
+            String kkmSiswa = "75";
+            String ketSiswa = "Hebat";
+
+            Nilai nilai = new Nilai(nama, nis, semester, mataPelajaran, nilaiSiswa, kkmSiswa, ketSiswa);
+
+            try {
+                AppQuery.addNilai(nilai);
+                tableViewNilai.getItems().add(nilai); // Add to table only if insertion is successful
+            } catch (SQLException e) {
+                System.out.println("Failed to insert nilai: " + e.getMessage());
+                // Display error message to the user
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Nilai Insertion Failed");
+                alert.setContentText("Failed to add nilai: " + e.getMessage());
+                alert.showAndWait();
+            }
+        });
+
+        clrBtnNilai.setOnAction(event -> {
+            try {
+                AppQuery.clrNilai();
+                // Clear the table view to reflect the deletion
+                tableViewNilai.getItems().clear();
+            } catch (SQLException e) {
+                System.out.println("Failed to delete all nilai: " + e.getMessage());
+                // Display error message to the user
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Nilai Deletion Failed");
+                alert.setContentText("Failed to delete all nilai: " + e.getMessage());
+                alert.showAndWait();
+            }
+        });
+
+        dltBtnNilai.setOnAction(event -> {
+            Nilai selectedNilai = tableViewNilai.getSelectionModel().getSelectedItem();
+            if (selectedNilai != null) {
+                tableViewNilai.getItems().remove(selectedNilai);
+                try {
+                    AppQuery.dltNilai(selectedNilai);
+                } catch (SQLException e) {
+                    System.out.println("Failed to delete nilai: " + e.getMessage());
+                }
+            }
+        });
+
+        upBtnNilai.setOnAction(event -> {
+            Nilai selectedNilai = tableViewNilai.getSelectionModel().getSelectedItem();
+            if (selectedNilai != null) {
+                selectedNilai.setNilaiSiswa(nilaiNilai.getText());
+                // selectedNilai.setKkmSiswa(kkmNilai.getText());
+                // selectedNilai.setKetSiswa(ketNilai.getText());
+
+                try {
+                    AppQuery.upNilai(selectedNilai);
+                    tableViewNilai.refresh(); // Refresh TableView untuk menampilkan data terbaru
+                } catch (SQLException e) {
+                    System.out.println("Failed to update nilai: " + e.getMessage());
+                }
+            } else {
+                // Tampilkan pesan bahwa tidak ada baris yang dipilih
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Peringatan");
+                alert.setHeaderText("Baris Tidak Dipilih");
+                alert.setContentText("Pilih baris untuk memperbarui nilai.");
+                alert.showAndWait();
+            }
+        });
+
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                List<Nilai> allNilaiList = AppQuery.loadNilaiFromDatabase("");
+                List<Nilai> filteredNilaiList = allNilaiList.stream()
+                        .filter(nilai -> nilai.getNama().toLowerCase().contains(newValue.toLowerCase()))
+                        .collect(Collectors.toList());
+                tableViewNilai.getItems().setAll(filteredNilaiList);
+            } catch (SQLException e) {
+                System.out.println("Failed to search nilai: " + e.getMessage());
+            }
+        });
+    }
 
     // end of nilai rapot
 
