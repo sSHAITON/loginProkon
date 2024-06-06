@@ -71,34 +71,37 @@ public class AppQuery {
     }
   }
 
-  public static void insertJadwal(Jadwal jadwal) throws SQLException {
-    String sql = "INSERT INTO jadwal_pelajaran (mapel_jadwal, pukul_jadwal, kelas_jadwal, hari_jadwal) VALUES (?, ?, ?, ?)";
+  public static void insertJadwal(Jadwal jadwal, Guru guru) throws SQLException {
+    String sql = "INSERT INTO jadwal_pelajaran (mapel_jadwal, pukul_jadwal, kelas_jadwal, hari_jadwal, NIP) VALUES (?, ?, ?, ?, ?)";
 
     try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
       pstmt.setString(1, jadwal.getMapel());
       pstmt.setString(2, jadwal.getPukul());
       pstmt.setString(3, jadwal.getKelas());
       pstmt.setString(4, jadwal.getHari());
+      pstmt.setInt(5, Integer.parseInt(guru.getNIP()));
 
       pstmt.executeUpdate();
     }
   }
 
-  public static List<Jadwal> loadJadwalFromDatabase() throws SQLException {
-    String sql = "SELECT mapel_jadwal, pukul_jadwal, kelas_jadwal, hari_jadwal FROM jadwal_pelajaran";
+  public static List<Jadwal> loadJadwalFromDatabase(String NIP) throws SQLException {
+    String sql = "SELECT mapel_jadwal, pukul_jadwal, kelas_jadwal, hari_jadwal FROM jadwal_pelajaran WHERE NIP = ?";
     List<Jadwal> jadwalList = new ArrayList<>();
 
-    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql);
-        ResultSet rs = pstmt.executeQuery()) {
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+      pstmt.setString(1, NIP);
 
-      while (rs.next()) {
-        String mapel = rs.getString("mapel_jadwal");
-        String pukul = rs.getString("pukul_jadwal");
-        String kelas = rs.getString("kelas_jadwal");
-        String hari = rs.getString("hari_jadwal");
+      try (ResultSet rs = pstmt.executeQuery()) {
+        while (rs.next()) {
+          String mapel = rs.getString("mapel_jadwal");
+          String pukul = rs.getString("pukul_jadwal");
+          String kelas = rs.getString("kelas_jadwal");
+          String hari = rs.getString("hari_jadwal");
 
-        Jadwal jadwal = new Jadwal(mapel, pukul, kelas, hari);
-        jadwalList.add(jadwal);
+          Jadwal jadwal = new Jadwal(mapel, pukul, kelas, hari);
+          jadwalList.add(jadwal);
+        }
       }
     }
 
@@ -315,7 +318,7 @@ public class AppQuery {
 
   public static List<Nilai> searchNilai(String searchText) throws SQLException {
     List<Nilai> filteredNilaiList = new ArrayList<>();
-    String sql = "SELECT * FROM nilai_pelajaran WHERE nama LIKE ?";
+    String sql = "SELECT * FROM nilai_pelajaran WHERE nis LIKE ?";
     try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
       String searchParam = "%" + searchText + "%";
       pstmt.setString(1, searchParam);

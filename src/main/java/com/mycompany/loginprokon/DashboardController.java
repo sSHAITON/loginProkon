@@ -17,12 +17,17 @@ import com.mycompany.loginprokon.model.Guru;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import com.dlsc.gemsfx.TimePicker;
 import com.dlsc.gemsfx.daterange.DateRange;
 import com.dlsc.gemsfx.daterange.DateRangePicker;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -48,6 +53,7 @@ import javafx.stage.Stage;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.mycompany.loginprokon.data.AppQuery;
@@ -55,6 +61,11 @@ import com.mycompany.loginprokon.data.DBConnection;
 import javafx.collections.ObservableList;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
+
+import com.itextpdf.text.*;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 public class DashboardController {
 
@@ -352,6 +363,9 @@ public class DashboardController {
     @FXML
     private TextField searchField;
 
+    @FXML
+    private Button pdfBtnKalender;
+
     // inisialisasi method
     // setiap method yang digunakan masukkan di sini
     public void initialize() {
@@ -581,9 +595,27 @@ public class DashboardController {
 
             deleteBtnJadwal.setOnAction(event -> deleteJadwal());
 
-            clearBtnJadwal.setOnAction(event -> clearJadwal());
+            clearBtnJadwal.setOnAction(event -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure you want to clear the schedule?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    clearJadwal();
+                }
+            });
 
             updateBtnJadwal.setOnAction(event -> updateJadwal());
+            pdfBtnJadwal.setOnAction(event -> {
+                try {
+                    createJadwalPdf(AppQuery.loadJadwalFromDatabase(NIPLabel.getText()));
+                } catch (SQLException e) {
+
+                    e.printStackTrace();
+                }
+            });
         }
 
         private void addJadwal() {
@@ -608,7 +640,7 @@ public class DashboardController {
             Jadwal jadwalPelajaran = new Jadwal(jadwal, pukulString, kelas, hari);
 
             try {
-                AppQuery.insertJadwal(jadwalPelajaran);
+                AppQuery.insertJadwal(jadwalPelajaran, null);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -724,7 +756,7 @@ public class DashboardController {
 
             List<Jadwal> jadwalList;
             try {
-                jadwalList = AppQuery.loadJadwalFromDatabase();
+                jadwalList = AppQuery.loadJadwalFromDatabase(NIPLabel.getText());
             } catch (SQLException e) {
                 e.printStackTrace();
                 return;
@@ -765,6 +797,105 @@ public class DashboardController {
         private void addItemsToComboBox(ComboBox<String> comboBox, List<String> items) {
             for (String item : items) {
                 comboBox.getItems().add(item);
+            }
+        }
+
+        public void createJadwalPdf(List<Jadwal> jadwalList) {
+            try {
+                Document document = new Document(PageSize.LEGAL);
+                PdfWriter.getInstance(document, new FileOutputStream("pdf/Jadwal.pdf"));
+                document.open();
+
+                PdfPTable table = new PdfPTable(2);
+                table.setWidthPercentage(100);
+                table.setWidths(new int[] { 1, 4 });
+
+                Image logo = Image.getInstance(
+                        "C:\\Users\\Hannya\\Documents\\NetBeansProjects\\loginProkon\\src\\main\\resources\\com\\mycompany\\loginprokon\\img\\icon.png");
+                logo.scaleToFit(100, 100);
+                PdfPCell imageCell = new PdfPCell(logo);
+                imageCell.setBorder(PdfPCell.NO_BORDER);
+                table.addCell(imageCell);
+
+                Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
+                Paragraph title = new Paragraph("Sekolah Tahfidzul Qur'an Baitul Muttaqin", fontTitle);
+                title.setAlignment(Element.ALIGN_LEFT);
+
+                Paragraph address = new Paragraph(
+                        "Jl. Antapani Lama No. 32 , Bandung, Jawa Barat \n" +
+                                "Telepon: +62 813-8744-6436\n" +
+                                "Email: pkbmbaitulmuttaqin@gmail.com");
+                address.setAlignment(Element.ALIGN_LEFT);
+
+                PdfPCell textCell = new PdfPCell();
+                textCell.addElement(title);
+                textCell.addElement(address);
+                textCell.setBorder(PdfPCell.NO_BORDER);
+                table.addCell(textCell);
+
+                document.add(table);
+
+                LineSeparator separator = new LineSeparator();
+                separator.setOffset(-2);
+                document.add(separator);
+
+                Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+                Paragraph judul = new Paragraph("JADWAL PELAJARAN", titleFont);
+                judul.setAlignment(Element.ALIGN_CENTER);
+                judul.setSpacingBefore(5);
+                judul.setSpacingAfter(5);
+                document.add(judul);
+
+                String[] days = { "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu" };
+
+                for (String day : days) {
+                    List<Jadwal> dayJadwalList = jadwalList.stream()
+                            .filter(jadwal -> jadwal.getHari().equalsIgnoreCase(day))
+                            .collect(Collectors.toList());
+
+                    if (!dayJadwalList.isEmpty()) {
+                        Paragraph paragraph = new Paragraph(day, new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD));
+                        paragraph.setAlignment(Element.ALIGN_CENTER);
+                        document.add(paragraph);
+
+                        document.add(new Paragraph("\n"));
+
+                        PdfPTable dayTable = new PdfPTable(4);
+                        PdfPCell cell;
+
+                        String[] headers = { "Hari", "Kelas", "Mapel", "Pukul" };
+                        for (String header : headers) {
+                            cell = new PdfPCell(new Phrase(header));
+                            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            dayTable.addCell(cell);
+                        }
+
+                        for (Jadwal jadwal : dayJadwalList) {
+                            dayTable.addCell(jadwal.getHari());
+                            dayTable.addCell(jadwal.getKelas());
+                            dayTable.addCell(jadwal.getMapel());
+                            dayTable.addCell(jadwal.getPukul().toString());
+                        }
+
+                        document.add(dayTable);
+                        document.add(Chunk.NEWLINE);
+                    }
+                }
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("PDF Creation");
+                alert.setHeaderText(null);
+                alert.setContentText("PDF created successfully.");
+                alert.showAndWait();
+
+                document.close();
+            } catch (DocumentException | IOException e) {
+                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("PDF Creation Failed");
+                alert.setContentText("Failed to create PDF: " + e.getMessage());
+                alert.showAndWait();
             }
         }
     }
@@ -825,6 +956,95 @@ public class DashboardController {
                 }
             }
         });
+
+        pdfBtnKalender.setOnAction(event -> createPDFkalender());
+    }
+
+    public void createPDFkalender() {
+        try {
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream("pdf/kalender_akademik.pdf"));
+            document.open();
+
+            PdfPTable table = new PdfPTable(2);
+            table.setWidthPercentage(100);
+            table.setWidths(new int[] { 1, 4 });
+
+            Image logo = Image.getInstance(
+                    "/C:\\Users\\Hannya\\Documents\\NetBeansProjects\\loginProkon\\src\\main\\resources\\com\\mycompany\\loginprokon\\img\\icon.png");
+            logo.scaleToFit(100, 100);
+            PdfPCell imageCell = new PdfPCell(logo);
+            imageCell.setBorder(PdfPCell.NO_BORDER);
+            table.addCell(imageCell);
+
+            Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
+            Paragraph title = new Paragraph("Sekolah Tahfidzul Qur'an Baitul Muttaqin", fontTitle);
+            title.setAlignment(Element.ALIGN_LEFT);
+
+            Paragraph address = new Paragraph(
+                    "Jl. Antapani Lama No. 32 , Bandung, Jawa Barat \n" +
+                            "Telepon: +62 813-8744-6436\n" +
+                            "Email: pkbmbaitulmuttaqin@gmail.com");
+            address.setAlignment(Element.ALIGN_LEFT);
+
+            PdfPCell textCell = new PdfPCell();
+            textCell.addElement(title);
+            textCell.addElement(address);
+            textCell.setBorder(PdfPCell.NO_BORDER);
+            table.addCell(textCell);
+
+            document.add(table);
+
+            LineSeparator separator = new LineSeparator();
+            separator.setOffset(-2);
+            document.add(separator);
+
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+            Paragraph judul = new Paragraph("KALENDERISASI AKADEMIK", titleFont);
+            judul.setAlignment(Element.ALIGN_CENTER);
+            judul.setSpacingBefore(10);
+            judul.setSpacingAfter(10);
+            document.add(judul);
+
+            PdfPTable table1 = new PdfPTable(3);
+            table1.setWidthPercentage(100);
+            table1.setSpacingBefore(10f);
+            table1.setSpacingAfter(10f);
+
+            PdfPCell cell1 = new PdfPCell(new Paragraph("Keterangan Acara"));
+            PdfPCell cell2 = new PdfPCell(new Paragraph("Semester"));
+            PdfPCell cell3 = new PdfPCell(new Paragraph("Tanggal"));
+
+            table1.addCell(cell1);
+            table1.addCell(cell2);
+            table1.addCell(cell3);
+
+            ObservableList<Acara> kalenderList = tableViewKalender.getItems();
+            for (Acara kalender : kalenderList) {
+                table1.addCell(kalender.getKeteranganAcara());
+                table1.addCell(kalender.getSemester());
+                table1.addCell(kalender.getTanggalAsString());
+            }
+
+            document.add(table1);
+            document.close();
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("PDF Creation");
+            alert.setHeaderText(null);
+            alert.setContentText("PDF created successfully.");
+            alert.showAndWait();
+
+            System.out.println("PDF created successfully.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Nilai Insertion Failed");
+            alert.setContentText("Failed to add nilai: " + e.getMessage());
+            alert.showAndWait();
+        }
     }
     // end of kalender
 
@@ -839,10 +1059,8 @@ public class DashboardController {
         nilaiColumn.setCellValueFactory(new PropertyValueFactory<>("nilaiSiswa"));
         kkmColumn.setCellValueFactory(new PropertyValueFactory<>("kkmSiswa"));
 
-        // Fungsi untuk menginisialisasi data nilai dari database dan mengatur aksi
-        // untuk tombol tambah dan hapus nilai
         try {
-            List<Nilai> nilaiList = AppQuery.loadNilaiFromDatabase(""); // Empty string for no initial filter
+            List<Nilai> nilaiList = AppQuery.loadNilaiFromDatabase("");
             tableViewNilai.getItems().setAll(nilaiList);
         } catch (SQLException e) {
             System.out.println("Failed to load nilai from database: " + e.getMessage());
@@ -861,10 +1079,9 @@ public class DashboardController {
 
             try {
                 AppQuery.addNilai(nilai);
-                tableViewNilai.getItems().add(nilai); // Add to table only if insertion is successful
+                tableViewNilai.getItems().add(nilai);
             } catch (SQLException e) {
                 System.out.println("Failed to insert nilai: " + e.getMessage());
-                // Display error message to the user
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText("Nilai Insertion Failed");
@@ -874,18 +1091,26 @@ public class DashboardController {
         });
 
         clrBtnNilai.setOnAction(event -> {
-            try {
-                AppQuery.clrNilai();
-                // Clear the table view to reflect the deletion
-                tableViewNilai.getItems().clear();
-            } catch (SQLException e) {
-                System.out.println("Failed to delete all nilai: " + e.getMessage());
-                // Display error message to the user
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("Nilai Deletion Failed");
-                alert.setContentText("Failed to delete all nilai: " + e.getMessage());
-                alert.showAndWait();
+            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmationAlert.setTitle("Penghapusan");
+            confirmationAlert.setHeaderText(null);
+            confirmationAlert.setContentText("Apakah anda yakin akan menghapus semua database?");
+
+            Optional<ButtonType> result = confirmationAlert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                try {
+                    AppQuery.clrNilai();
+                    tableViewNilai.getItems().clear();
+                } catch (SQLException e) {
+                    System.out.println("Failed to delete all nilai: " + e.getMessage());
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Nilai Deletion Failed");
+                    alert.setContentText("Failed to delete all nilai: " + e.getMessage());
+                    alert.showAndWait();
+                }
+            } else {
+                // do nothing
             }
         });
 
@@ -910,12 +1135,11 @@ public class DashboardController {
 
                 try {
                     AppQuery.upNilai(selectedNilai);
-                    tableViewNilai.refresh(); // Refresh TableView untuk menampilkan data terbaru
+                    tableViewNilai.refresh();
                 } catch (SQLException e) {
                     System.out.println("Failed to update nilai: " + e.getMessage());
                 }
             } else {
-                // Tampilkan pesan bahwa tidak ada baris yang dipilih
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("Peringatan");
                 alert.setHeaderText("Baris Tidak Dipilih");
@@ -926,15 +1150,122 @@ public class DashboardController {
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                List<Nilai> allNilaiList = AppQuery.loadNilaiFromDatabase("");
-                List<Nilai> filteredNilaiList = allNilaiList.stream()
-                        .filter(nilai -> nilai.getNama().toLowerCase().contains(newValue.toLowerCase()))
-                        .collect(Collectors.toList());
+                List<Nilai> filteredNilaiList = AppQuery.searchNilai(newValue);
                 tableViewNilai.getItems().setAll(filteredNilaiList);
             } catch (SQLException e) {
                 System.out.println("Failed to search nilai: " + e.getMessage());
             }
         });
+
+        pdfBtnNilai.setOnAction(event -> createPDFnilai());
+    }
+
+    public void createPDFnilai() {
+        try {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String fileName = "pdf/nilai_" + timeStamp + ".pdf";
+
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(fileName));
+            document.open();
+
+            PdfPTable headerTable = new PdfPTable(2);
+            headerTable.setWidthPercentage(100);
+            headerTable.setWidths(new int[] { 1, 4 });
+
+            Image logo = Image.getInstance(
+                    "C:\\Users\\Hannya\\Documents\\NetBeansProjects\\loginProkon\\src\\main\\resources\\com\\mycompany\\loginprokon\\img\\icon.png");
+            logo.scaleToFit(100, 100);
+            PdfPCell imageCell = new PdfPCell(logo);
+            imageCell.setBorder(PdfPCell.NO_BORDER);
+            headerTable.addCell(imageCell);
+
+            Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
+            Paragraph title = new Paragraph("Sekolah Tahfidzul Qur'an Baitul Muttaqin", fontTitle);
+            title.setAlignment(Element.ALIGN_LEFT);
+
+            Paragraph address = new Paragraph(
+                    "Jl. Antapani Lama No. 32 , Bandung, Jawa Barat \n" +
+                            "Telepon: +62 813-8744-6436\n" +
+                            "Email: pkbmbaitulmuttaqin@gmail.com");
+            address.setAlignment(Element.ALIGN_LEFT);
+
+            PdfPCell textCell = new PdfPCell();
+            textCell.addElement(title);
+            textCell.addElement(address);
+            textCell.setBorder(PdfPCell.NO_BORDER);
+            headerTable.addCell(textCell);
+
+            document.add(headerTable);
+
+            LineSeparator separator = new LineSeparator();
+            separator.setOffset(-2);
+            document.add(new Chunk(separator));
+
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+            Paragraph judul = new Paragraph("Laporan Nilai Siswa", titleFont);
+            judul.setAlignment(Element.ALIGN_CENTER);
+            judul.setSpacingBefore(10);
+            judul.setSpacingAfter(10);
+            document.add(judul);
+
+            if (!tableViewNilai.getItems().isEmpty()) {
+                Nilai firstNilai = tableViewNilai.getItems().get(0);
+
+                Font dataDiriFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+                Paragraph dataDiriTitle = new Paragraph("DATA DIRI", dataDiriFont);
+                dataDiriTitle.setSpacingBefore(10);
+                dataDiriTitle.setSpacingAfter(5);
+                document.add(dataDiriTitle);
+
+                Paragraph dataDiri = new Paragraph(
+                        "Nama: " + firstNilai.getNama() + "\n" +
+                                "NIS: " + firstNilai.getNis() + "\n" +
+                                "Semester: " + firstNilai.getSemester());
+                dataDiri.setSpacingAfter(10);
+                document.add(dataDiri);
+            }
+
+            PdfPTable nilaiTable = new PdfPTable(4);
+            nilaiTable.setWidthPercentage(100);
+            nilaiTable.setSpacingBefore(10f);
+            nilaiTable.setSpacingAfter(10f);
+
+            PdfPCell cell1 = new PdfPCell(new Paragraph("Mata Pelajaran"));
+            PdfPCell cell2 = new PdfPCell(new Paragraph("Nilai"));
+            PdfPCell cell3 = new PdfPCell(new Paragraph("KKM"));
+            PdfPCell cell4 = new PdfPCell(new Paragraph("Keterangan"));
+
+            nilaiTable.addCell(cell1);
+            nilaiTable.addCell(cell2);
+            nilaiTable.addCell(cell3);
+            nilaiTable.addCell(cell4);
+
+            for (Nilai nilai : tableViewNilai.getItems()) {
+                nilaiTable.addCell(nilai.getMataPelajaran());
+                nilaiTable.addCell(nilai.getNilaiSiswa());
+                nilaiTable.addCell(nilai.getKkmSiswa());
+                nilaiTable.addCell(nilai.getKetSiswa());
+            }
+
+            document.add(nilaiTable);
+            document.close();
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("PDF Creation");
+            alert.setHeaderText(null);
+            alert.setContentText("PDF created successfully.");
+            alert.showAndWait();
+
+            System.out.println("PDF Created successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("PDF Creation Failed");
+            alert.setContentText("Failed to create PDF: " + e.getMessage());
+            alert.showAndWait();
+        }
     }
 
     // end of nilai rapot

@@ -16,5 +16,6 @@ module com.mycompany.loginprokon {
     exports com.mycompany.loginprokon.data;
 
     requires com.dlsc.gemsfx;
+    requires itextpdf;
 
 }
