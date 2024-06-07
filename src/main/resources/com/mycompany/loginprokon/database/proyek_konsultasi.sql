@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 03, 2024 at 11:34 AM
+-- Generation Time: Jun 07, 2024 at 07:58 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -75,23 +75,24 @@ CREATE TABLE `jadwal_pelajaran` (
   `mapel_jadwal` varchar(255) NOT NULL,
   `pukul_jadwal` varchar(255) NOT NULL,
   `kelas_jadwal` varchar(255) NOT NULL,
-  `hari_jadwal` varchar(255) NOT NULL
+  `hari_jadwal` varchar(255) NOT NULL,
+  `NIP` int(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `jadwal_pelajaran`
 --
 
-INSERT INTO `jadwal_pelajaran` (`id`, `mapel_jadwal`, `pukul_jadwal`, `kelas_jadwal`, `hari_jadwal`) VALUES
-(1, 'Bahasa Indonesia', '08:00', '3', 'Rabu'),
-(7, 'Bahasa Indonesia', '08:00', '3', 'Rabu'),
-(14, 'Bahasa Indonesia', '08:00', '3', 'Selasa'),
-(20, 'Bahasa Indonesia', '08:00', '3', 'Rabu'),
-(21, 'Sejarah Islam', '10:00', '4', 'Senin'),
-(22, 'Sejarah Islam', '10:00', '4', 'Senin'),
-(23, 'Matematika', '12:00', '4', 'Jumat'),
-(26, 'Bahasa Indonesia', '10:00', '4', 'Kamis'),
-(27, 'Matematika', '10:00', '2', 'Selasa');
+INSERT INTO `jadwal_pelajaran` (`id`, `mapel_jadwal`, `pukul_jadwal`, `kelas_jadwal`, `hari_jadwal`, `NIP`) VALUES
+(1, 'Bahasa Indonesia', '08:00', '3', 'Rabu', 111111),
+(7, 'Bahasa Indonesia', '08:00', '3', 'Rabu', 111111),
+(14, 'Sejarah Islam', '20:00', '3', 'Kamis', 111111),
+(20, 'Bahasa Indonesia', '08:00', '3', 'Rabu', 111111),
+(21, 'Sejarah Islam', '10:00', '4', 'Senin', 111111),
+(22, 'Sejarah Islam', '10:00', '4', 'Senin', 111111),
+(23, 'Matematika', '12:00', '4', 'Jumat', 111111),
+(26, 'Bahasa Indonesia', '10:00', '4', 'Kamis', 111111),
+(27, 'Matematika', '10:00', '2', 'Selasa', 111111);
 
 -- --------------------------------------------------------
 
@@ -117,18 +118,28 @@ INSERT INTO `kalenderisasi` (`id_kalender`, `tanggal_acara`, `keterangan_acara`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `nilai hafalan al-quran`
+-- Table structure for table `nilai_hafalan_alquran`
 --
 
-CREATE TABLE `nilai hafalan al-quran` (
-  `Juz` int(30) NOT NULL,
-  `Nilai Tahsin` int(100) NOT NULL,
+CREATE TABLE `nilai_hafalan_alquran` (
+  `idnilaihaf` int(100) NOT NULL,
   `Surat` varchar(100) NOT NULL,
-  `Nilai Hafalan` int(100) NOT NULL,
   `Ayat` int(255) NOT NULL,
-  `Keterangan` varchar(255) NOT NULL,
-  `Nama Siswa` varchar(255) NOT NULL
+  `NamaSiswa` varchar(255) NOT NULL,
+  `tanggalhafalan` date DEFAULT NULL,
+  `nis` int(100) NOT NULL,
+  `kelas` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `nilai_hafalan_alquran`
+--
+
+INSERT INTO `nilai_hafalan_alquran` (`idnilaihaf`, `Surat`, `Ayat`, `NamaSiswa`, `tanggalhafalan`, `nis`, `kelas`) VALUES
+(8, 'al-fill', 40, 'nama', '2024-06-29', 3, '3'),
+(9, 'al-fill', 200, 'ridhwan', '2024-06-08', 200, '3'),
+(10, 'al-falaq', 75, 'asdasdasda', '2024-06-28', 3, '4a'),
+(11, 'al-fill', 25, 'awqasda', '2024-06-29', 200, '4a');
 
 -- --------------------------------------------------------
 
@@ -152,8 +163,14 @@ CREATE TABLE `nilai_pelajaran` (
 --
 
 INSERT INTO `nilai_pelajaran` (`id_pelajaran`, `nama`, `nis`, `semester`, `mata_pelajaran`, `nilai`, `kkm`, `ket`) VALUES
-(79, 'far', 12, 12, 'tajwid', 100, 75, 'Hebat'),
-(80, 'Jawa', 13, 2, 'Hafalan Surat Pendek', 90, 75, 'Hebat');
+(83, 'Agis', 1, 5, 'Bahasa Indonesia', 100, 75, 'Hebat'),
+(84, 'Agis', 1, 5, 'Matematika', 100, 75, 'Hebat'),
+(85, 'Agis', 1, 5, 'Sejarah Islam', 100, 75, 'Hebat'),
+(86, 'Satria', 2, 5, 'Bahasa Indonesia', 100, 75, 'Hebat'),
+(87, 'Satria', 2, 5, 'Matematika', 100, 75, 'Hebat'),
+(88, 'Satria', 2, 5, 'Sejarah Islam', 100, 75, 'Hebat'),
+(89, 'Farhan', 3, 5, 'Bahasa Indonesia', 100, 75, 'Hebat'),
+(90, 'Farhan', 3, 5, 'Matematika', 100, 75, 'Hebat');
 
 -- --------------------------------------------------------
 
@@ -201,13 +218,20 @@ ALTER TABLE `guru`
 -- Indexes for table `jadwal_pelajaran`
 --
 ALTER TABLE `jadwal_pelajaran`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_nipjadwal` (`NIP`);
 
 --
 -- Indexes for table `kalenderisasi`
 --
 ALTER TABLE `kalenderisasi`
   ADD PRIMARY KEY (`id_kalender`);
+
+--
+-- Indexes for table `nilai_hafalan_alquran`
+--
+ALTER TABLE `nilai_hafalan_alquran`
+  ADD PRIMARY KEY (`idnilaihaf`);
 
 --
 -- Indexes for table `nilai_pelajaran`
@@ -244,10 +268,16 @@ ALTER TABLE `kalenderisasi`
   MODIFY `id_kalender` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
+-- AUTO_INCREMENT for table `nilai_hafalan_alquran`
+--
+ALTER TABLE `nilai_hafalan_alquran`
+  MODIFY `idnilaihaf` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
 -- AUTO_INCREMENT for table `nilai_pelajaran`
 --
 ALTER TABLE `nilai_pelajaran`
-  MODIFY `id_pelajaran` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+  MODIFY `id_pelajaran` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- Constraints for dumped tables
@@ -258,6 +288,12 @@ ALTER TABLE `nilai_pelajaran`
 --
 ALTER TABLE `admin`
   ADD CONSTRAINT `fk_nip` FOREIGN KEY (`NIP`) REFERENCES `guru` (`NIP`);
+
+--
+-- Constraints for table `jadwal_pelajaran`
+--
+ALTER TABLE `jadwal_pelajaran`
+  ADD CONSTRAINT `fk_nipjadwal` FOREIGN KEY (`NIP`) REFERENCES `guru` (`NIP`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
