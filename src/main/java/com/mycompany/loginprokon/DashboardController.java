@@ -1,23 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package com.mycompany.loginprokon;
-
-/**
- *
- * @author asepm
- */
 
 import com.mycompany.loginprokon.model.Acara;
 import com.mycompany.loginprokon.model.Jadwal;
 import com.mycompany.loginprokon.model.Nilai;
+import com.mycompany.loginprokon.model.NilaiHafalan;
 import com.mycompany.loginprokon.model.Siswa;
 import com.mycompany.loginprokon.model.Guru;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -35,17 +28,23 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -64,6 +63,7 @@ import javafx.util.Duration;
 
 import com.itextpdf.text.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
@@ -85,7 +85,16 @@ public class DashboardController {
     private StackPane dashboardPane;
 
     @FXML
+    private AnchorPane grafHaf;
+
+    @FXML
+    private LineChart<String, Number> grafikHafalan;
+
+    @FXML
     private Button grafikHafBtn;
+
+    @FXML
+    private Button backBtnHaf;
 
     @FXML
     private AnchorPane jadwal;
@@ -366,6 +375,48 @@ public class DashboardController {
     @FXML
     private Button pdfBtnKalender;
 
+    @FXML
+    private TableView<NilaiHafalan> TableHafalan;
+
+    @FXML
+    private TextField namaSurat;
+
+    @FXML
+    private TextField BanyakAyat;
+
+    @FXML
+    private DatePicker tanggalHafalan;
+
+    @FXML
+    private TextField namaHafalan;
+
+    @FXML
+    private TextField nisHafalan;
+
+    @FXML
+    private TextField kelasHafalan;
+
+    @FXML
+    private Button addBtnHafalan;
+
+    @FXML
+    private Button delBtnHafalan;
+
+    @FXML
+    private TableColumn<NilaiHafalan, String> suratColumn;
+
+    @FXML
+    private TableColumn<NilaiHafalan, Integer> banyakAyatColumn;
+
+    @FXML
+    private TableColumn<NilaiHafalan, DatePicker> tanggalColumn;
+
+    @FXML
+    private TextField searchHafalan;
+
+    @FXML
+    private Button pdfBtnHafalan;
+
     // inisialisasi method
     // setiap method yang digunakan masukkan di sini
     public void initialize() {
@@ -373,6 +424,8 @@ public class DashboardController {
         initializeTableGuru();
         initializeKalenderAkademik();
         initializeNilai();
+        initializeNilaiHafalan();
+        initializeHafalanChart();
         JadwalController jadwalController = new JadwalController();
         jadwalController.initializeJadwalPelajaran();
         jadwalController.refreshJadwalTable();
@@ -388,6 +441,7 @@ public class DashboardController {
         monitoringHaf.setVisible(false);
         daftarguru.setVisible(false);
         daftarsiswa.setVisible(false);
+        grafHaf.setVisible(false);
 
         dashboardBtn.getStyleClass().remove("navbtn-selected");
         jadwalBtn.getStyleClass().remove("navbtn-selected");
@@ -407,13 +461,16 @@ public class DashboardController {
             } else if (event.getSource() == nilaiRapotBtn) {
                 nilaiRapot.setVisible(true);
                 nilaiRapotBtn.getStyleClass().add("navbtn-selected");
-            } else if (event.getSource() == monitoringHafBtn) {
+            } else if (event.getSource() == monitoringHafBtn || event.getSource() == backBtnHaf) {
                 monitoringHaf.setVisible(true);
                 monitoringHafBtn.getStyleClass().add("navbtn-selected");
             } else if (event.getSource() == daftarguruBtn) {
                 daftarguru.setVisible(true);
             } else if (event.getSource() == daftarsiswBtn) {
                 daftarsiswa.setVisible(true);
+            } else if (event.getSource() == grafikHafBtn) {
+                grafHaf.setVisible(true);
+                monitoringHafBtn.getStyleClass().add("navbtn-selected");
             }
         } finally {
             try {
@@ -427,6 +484,9 @@ public class DashboardController {
                 tableviewGuru.getItems().setAll(guruList);
                 List<Nilai> nilaiList = AppQuery.loadNilaiFromDatabase("");
                 tableViewNilai.getItems().setAll(nilaiList);
+                List<NilaiHafalan> nilaiHafalanList = AppQuery.loadNilaiHafalanFromDatabase();
+                TableHafalan.getItems().setAll(nilaiHafalanList);
+                initializeHafalanChart();
             } catch (SQLException el) {
                 System.out.println("Failed to load acara from database: " + el.getMessage());
 
@@ -1152,10 +1212,14 @@ public class DashboardController {
             try {
                 List<Nilai> filteredNilaiList = AppQuery.searchNilai(newValue);
                 tableViewNilai.getItems().setAll(filteredNilaiList);
+
+                pdfBtnNilai.setDisable(newValue.trim().isEmpty());
             } catch (SQLException e) {
                 System.out.println("Failed to search nilai: " + e.getMessage());
             }
         });
+
+        pdfBtnNilai.setDisable(searchField.getText().trim().isEmpty());
 
         pdfBtnNilai.setOnAction(event -> createPDFnilai());
     }
@@ -1271,6 +1335,184 @@ public class DashboardController {
     // end of nilai rapot
 
     // Monitoring Hafalan
+    public void initializeNilaiHafalan() {
+        suratColumn.setCellValueFactory(new PropertyValueFactory<>("surah"));
+        banyakAyatColumn.setCellValueFactory(new PropertyValueFactory<>("banyakayat"));
+        tanggalColumn.setCellValueFactory(new PropertyValueFactory<>("tanggal"));
 
+        try {
+            List<NilaiHafalan> nilaiHaf = AppQuery.loadNilaiHafalanFromDatabase();
+            TableHafalan.getItems().setAll(nilaiHaf);
+        } catch (SQLException e) {
+            System.out.println("Failed to load nilai from database: " + e.getMessage());
+        }
+
+        addBtnHafalan.setOnAction(event -> {
+            String nama = namaHafalan.getText();
+            Integer nis = Integer.valueOf(BanyakAyat.getText());
+            String surah = namaSurat.getText();
+            String kelas = kelasHafalan.getText();
+            Integer banyakayat = Integer.valueOf(BanyakAyat.getText());
+            LocalDate tanggal = tanggalHafalan.getValue();
+
+            if (nama == null || nama.trim().isEmpty() ||
+                    surah == null || surah.trim().isEmpty() ||
+                    kelas == null || kelas.trim().isEmpty()) {
+
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill in all fields");
+                alert.showAndWait();
+            } else {
+                NilaiHafalan nilai = new NilaiHafalan(nama, nis, surah, tanggal, kelas, banyakayat);
+                try {
+                    AppQuery.insertNilai(nilai);
+                    TableHafalan.getItems().add(nilai);
+                } catch (SQLException e) {
+                    System.out.println("Failed to insert nilai: " + e.getMessage());
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Nilai Insertion Failed");
+                    alert.setContentText("Failed to add nilai: " + e.getMessage());
+                    alert.showAndWait();
+                }
+            }
+        });
+
+        delBtnHafalan.setOnAction(event -> {
+            NilaiHafalan selectedNilaiHafalan = TableHafalan.getSelectionModel().getSelectedItem();
+            if (selectedNilaiHafalan != null) {
+                try {
+                    AppQuery.deleteNilai(selectedNilaiHafalan);
+                    TableHafalan.getItems().remove(selectedNilaiHafalan);
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Success");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Data berhasil dihapus");
+                    alert.showAndWait();
+                } catch (SQLException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Gagal menghapus data: " + e.getMessage());
+                    alert.showAndWait();
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Please select a record to delete");
+                alert.showAndWait();
+            }
+        });
+
+        searchHafalan.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                List<NilaiHafalan> filteredNilaihafList = AppQuery.searchNilaiHafalan(newValue);
+                TableHafalan.getItems().setAll(filteredNilaihafList);
+
+                pdfBtnNilai.setDisable(newValue.trim().isEmpty());
+                initializeHafalanChart();
+            } catch (SQLException e) {
+                System.out.println("Failed to search nilai: " + e.getMessage());
+            }
+        });
+
+        pdfBtnHafalan.setOnAction(event -> createPDFHaf());
+    }
+
+    public void createPDFHaf() {
+        try {
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream("pdf/nilai_hafalan.pdf"));
+            document.open();
+
+            PdfPTable headerTable = new PdfPTable(2);
+            headerTable.setWidthPercentage(100);
+            headerTable.setWidths(new int[] { 1, 4 });
+
+            Image logo = Image.getInstance(
+                    "C:\\Users\\Hannya\\Documents\\NetBeansProjects\\loginProkon\\src\\main\\resources\\com\\mycompany\\loginprokon\\img\\icon.png");
+            logo.scaleToFit(100, 100);
+            PdfPCell imageCell = new PdfPCell(logo);
+            imageCell.setBorder(PdfPCell.NO_BORDER);
+            headerTable.addCell(imageCell);
+
+            Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
+            Paragraph title = new Paragraph("Sekolah Tahfidzul Qur'an Baitul Muttaqin", fontTitle);
+            title.setAlignment(Element.ALIGN_LEFT);
+
+            Paragraph address = new Paragraph(
+                    "Jl. Antapani Lama No. 32 , Bandung, Jawa Barat \n" +
+                            "Telepon: +62 813-8744-6436\n" +
+                            "Email: pkbmbaitulmuttaqin@gmail,com");
+            address.setAlignment(Element.ALIGN_LEFT);
+
+            PdfPCell textCell = new PdfPCell();
+            textCell.addElement(title);
+            textCell.addElement(address);
+            textCell.setBorder(PdfPCell.NO_BORDER);
+            headerTable.addCell(textCell);
+
+            document.add(headerTable);
+
+            LineSeparator separator = new LineSeparator();
+            separator.setOffset(-2);
+            document.add(new Chunk(separator));
+
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+            Paragraph judul = new Paragraph("Laporan Nilai Hafalan Siswa", titleFont);
+            judul.setAlignment(Element.ALIGN_CENTER);
+            judul.setSpacingBefore(10);
+            judul.setSpacingAfter(10);
+            document.add(judul);
+
+            PdfPTable table = new PdfPTable(3);
+            table.setWidthPercentage(100);
+            table.setSpacingBefore(10);
+
+            table.addCell("Surah");
+            table.addCell("Banyak Ayat");
+            table.addCell("Tanggal");
+
+            for (NilaiHafalan nilai : TableHafalan.getItems()) {
+                table.addCell(nilai.getSurah());
+                table.addCell(String.valueOf(nilai.getBanyakayat()));
+                table.addCell(nilai.getTanggal().toString());
+            }
+
+            document.add(table);
+
+            document.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("PDF Creation Failed");
+            alert.setContentText("Failed to create PDF: " + e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    private void initializeHafalanChart() {
+        try {
+            List<NilaiHafalan> nilaiHafalanList = AppQuery.loadNilaiHafalanFromDatabase();
+
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+
+            for (NilaiHafalan nilaiHafalan : nilaiHafalanList) {
+                series.getData()
+                        .add(new XYChart.Data<>(nilaiHafalan.getTanggalAsDate().toString(),
+                                nilaiHafalan.getBanyakayat()));
+            }
+
+            grafikHafalan.getData().clear();
+            grafikHafalan.getData().add(series);
+        } catch (SQLException e) {
+            System.out.println("Failed to load nilai hafalan from database: " + e.getMessage());
+        }
+    }
     // end of monitoring hafalan
 }

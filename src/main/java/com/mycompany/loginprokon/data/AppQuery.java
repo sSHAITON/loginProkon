@@ -1,9 +1,11 @@
 package com.mycompany.loginprokon.data;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,7 @@ import com.dlsc.gemsfx.daterange.DateRange;
 import com.mycompany.loginprokon.data.DBConnection;
 import com.mycompany.loginprokon.model.Jadwal;
 import com.mycompany.loginprokon.model.Nilai;
+import com.mycompany.loginprokon.model.NilaiHafalan;
 import com.mycompany.loginprokon.model.Siswa;
 import com.mycompany.loginprokon.model.Guru;
 
@@ -339,6 +342,86 @@ public class AppQuery {
       }
     }
     return filteredNilaiList;
+  }
+
+  public static void insertNilai(NilaiHafalan nilaiHafalan) throws SQLException {
+
+    String sql = "INSERT INTO nilai_hafalan_alquran (namaSiswa, nis, surat, tanggalhafalan, kelas, ayat) VALUES (?, ?, ?, ?, ?, ?)";
+    PreparedStatement statement = DBConnection.getDBConn().prepareStatement(sql);
+    statement.setString(1, nilaiHafalan.getNama());
+    statement.setInt(2, nilaiHafalan.getNis());
+    statement.setString(3, nilaiHafalan.getSurah());
+    statement.setDate(4, nilaiHafalan.getTanggalAsDate());
+    statement.setString(5, nilaiHafalan.getKelas());
+    statement.setInt(6, nilaiHafalan.getBanyakayat());
+
+    statement.executeUpdate();
+  }
+
+  public static List<NilaiHafalan> loadNilaiHafalanFromDatabase() throws SQLException {
+    String sql = "SELECT namaSiswa, nis, surat, tanggalhafalan, kelas, ayat FROM nilai_hafalan_alquran";
+    List<NilaiHafalan> nilaiList = new ArrayList<>();
+
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery()) {
+
+      while (rs.next()) {
+        Date tanggalSql = rs.getDate("tanggalhafalan");
+        java.sql.Timestamp sqlTimestamp = new java.sql.Timestamp(tanggalSql.getTime());
+        LocalDate tanggal = sqlTimestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        String nama = rs.getString("namaSiswa");
+        Integer nis = rs.getInt("nis");
+        String surah = rs.getString("surat");
+        String kelas = rs.getString("kelas");
+        Integer banyakayat = rs.getInt("ayat");
+
+        NilaiHafalan nilaiHafalan = new NilaiHafalan(nama, nis, surah, tanggal, kelas, banyakayat);
+        nilaiList.add(nilaiHafalan);
+      }
+    }
+
+    return nilaiList;
+  }
+
+  public static void deleteNilai(NilaiHafalan nilai) throws SQLException {
+    String sql = "DELETE FROM nilai_hafalan_alquran WHERE namaSiswa = ? AND nis = ? AND surat = ? AND tanggalhafalan = ? AND kelas = ? AND ayat = ? ";
+
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql);) {
+      pstmt.setString(1, nilai.getNama());
+      pstmt.setInt(2, nilai.getNis());
+      pstmt.setString(3, nilai.getSurah());
+      pstmt.setDate(4, nilai.getTanggalAsDate());
+      pstmt.setString(5, nilai.getKelas());
+      pstmt.setInt(6, nilai.getBanyakayat());
+      pstmt.executeUpdate();
+    }
+
+  }
+
+  public static List<NilaiHafalan> searchNilaiHafalan(String searchText) throws SQLException {
+    List<NilaiHafalan> filteredNilaihafList = new ArrayList<>();
+    String sql = "SELECT * FROM nilai_hafalan_alquran WHERE nis LIKE ?";
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+      String searchParam = "%" + searchText + "%";
+      pstmt.setString(1, searchParam);
+
+      try (ResultSet rs = pstmt.executeQuery()) {
+        while (rs.next()) {
+          Date tanggalSql = rs.getDate("tanggalhafalan");
+          java.sql.Timestamp sqlTimestamp = new java.sql.Timestamp(tanggalSql.getTime());
+          LocalDate tanggal = sqlTimestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+          String nama = rs.getString("namaSiswa");
+          Integer nis = rs.getInt("nis");
+          String surah = rs.getString("surat");
+          String kelas = rs.getString("kelas");
+          Integer banyakayat = rs.getInt("ayat");
+
+          NilaiHafalan nilaiObject = new NilaiHafalan(nama, nis, surah, tanggal, kelas, banyakayat);
+          filteredNilaihafList.add(nilaiObject);
+        }
+      }
+    }
+    return filteredNilaihafList;
   }
 
 }

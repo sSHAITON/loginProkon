@@ -139,7 +139,7 @@
 }
 .table-row-cell:hover {
     -fx-background-color: #93f9b911;
-    -fx-text-background-color: red;
+    -fx-text-background-color: rgba(31, 105, 34, 0.664);
 }
 
  .table-row-cell:selected .text {
