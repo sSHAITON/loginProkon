@@ -3,16 +3,19 @@ package com.mycompany.loginprokon.model;
 public class Nilai {
   private String nama;
   private String nis;
+  private String kelas;
   private String semester;
   private String mataPelajaran;
-  private String nilaiSiswa;
-  private String kkmSiswa;
+  private int nilaiSiswa;
+  private int kkmSiswa;
   private String ketSiswa;
 
-  public Nilai(String nama, String nis, String semester, String mataPelajaran, String nilaiSiswa, String kkmSiswa,
+  public Nilai(String nama, String nis, String kelas, String semester, String mataPelajaran, int nilaiSiswa,
+      int kkmSiswa,
       String ketSiswa) {
     this.nama = nama;
     this.nis = nis;
+    this.kelas = kelas;
     this.semester = semester;
     this.mataPelajaran = mataPelajaran;
     this.nilaiSiswa = nilaiSiswa;
@@ -38,6 +41,14 @@ public class Nilai {
     this.nis = nis;
   }
 
+  public String getKelas() {
+    return kelas;
+  }
+
+  public void setKelas(String kelas) {
+    this.kelas = kelas;
+  }
+
   public String getSemester() {
     return semester;
   }
@@ -54,19 +65,19 @@ public class Nilai {
     this.mataPelajaran = mataPelajaran;
   }
 
-  public String getNilaiSiswa() {
+  public int getNilaiSiswa() {
     return nilaiSiswa;
   }
 
-  public void setNilaiSiswa(String nilaiSiswa) {
+  public void setNilaiSiswa(int nilaiSiswa) {
     this.nilaiSiswa = nilaiSiswa;
   }
 
-  public String getKkmSiswa() {
+  public int getKkmSiswa() {
     return kkmSiswa;
   }
 
-  public void setKkmSiswa(String kkmSiswa) {
+  public void setKkmSiswa(int kkmSiswa) {
     this.kkmSiswa = kkmSiswa;
   }
 

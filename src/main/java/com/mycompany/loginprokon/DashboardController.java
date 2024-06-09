@@ -331,6 +331,9 @@ public class DashboardController {
     private TextField nisNilai;
 
     @FXML
+    private TextField kelasNilai;
+
+    @FXML
     private TextField smtNilai;
 
     @FXML
@@ -365,6 +368,9 @@ public class DashboardController {
 
     @FXML
     private TableColumn<Nilai, String> mapelNilaiColumn;
+
+    @FXML
+    private TableColumn<Nilai, String> nisNilaiColumn;
 
     @FXML
     private TableView<Nilai> tableViewNilai;
@@ -412,6 +418,9 @@ public class DashboardController {
     private TableColumn<NilaiHafalan, DatePicker> tanggalColumn;
 
     @FXML
+    private TableColumn<NilaiHafalan, Integer> nisColumn;
+
+    @FXML
     private TextField searchHafalan;
 
     @FXML
@@ -429,6 +438,11 @@ public class DashboardController {
         JadwalController jadwalController = new JadwalController();
         jadwalController.initializeJadwalPelajaran();
         jadwalController.refreshJadwalTable();
+
+        rowSelectionListenerToKalTable();
+        rowSelectionListenerToNilaiTable();
+        jadwalController.rowSelectionListenerToJadwalTable();
+        rowSelectionListenerToNilaiHafTable();
 
     }
 
@@ -860,6 +874,27 @@ public class DashboardController {
             }
         }
 
+        public void rowSelectionListenerToJadwalTable() {
+            addListenerToTableJadwal(seninJadwalTableView);
+            addListenerToTableJadwal(selasaJadwalTabelView);
+            addListenerToTableJadwal(rabuJadwalTabelView);
+            addListenerToTableJadwal(kamisJadwalTabelView);
+            addListenerToTableJadwal(jumatJadwalTabelView);
+            addListenerToTableJadwal(sabtuJadwalTabelView);
+        }
+
+        private void addListenerToTableJadwal(TableView<Jadwal> table) {
+            table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    Jadwal selectedJadwal = (Jadwal) newSelection;
+
+                    hariComboBox.setValue(selectedJadwal.getHari());
+                    jadwalComboBox.setValue(selectedJadwal.getMapel());
+                    kelasComboBox.setValue(selectedJadwal.getKelas());
+                }
+            });
+        }
+
         public void createJadwalPdf(List<Jadwal> jadwalList) {
             try {
                 Document document = new Document(PageSize.LEGAL);
@@ -1020,6 +1055,19 @@ public class DashboardController {
         pdfBtnKalender.setOnAction(event -> createPDFkalender());
     }
 
+    public void rowSelectionListenerToKalTable() {
+        tableViewKalender.getSelectionModel().selectedItemProperty()
+                .addListener((obs, oldSelection, newSelection) -> {
+                    if (newSelection != null) {
+                        Acara selectedAcara = (Acara) newSelection;
+
+                        ketAcara.setText(selectedAcara.getKeteranganAcara());
+                        semesterComboBox.setValue(selectedAcara.getSemester());
+
+                    }
+                });
+    }
+
     public void createPDFkalender() {
         try {
             Document document = new Document();
@@ -1118,6 +1166,7 @@ public class DashboardController {
         ketNilaiColumn.setCellValueFactory(new PropertyValueFactory<>("ketSiswa"));
         nilaiColumn.setCellValueFactory(new PropertyValueFactory<>("nilaiSiswa"));
         kkmColumn.setCellValueFactory(new PropertyValueFactory<>("kkmSiswa"));
+        nisNilaiColumn.setCellValueFactory(new PropertyValueFactory<>("nis"));
 
         try {
             List<Nilai> nilaiList = AppQuery.loadNilaiFromDatabase("");
@@ -1129,13 +1178,14 @@ public class DashboardController {
         addBtnNilai.setOnAction(event -> {
             String nama = namaNilai.getText();
             String nis = nisNilai.getText();
+            String kelas = kelasNilai.getText();
             String semester = smtNilai.getText();
             String mataPelajaran = ComboBoxNilai.getValue();
-            String nilaiSiswa = nilaiNilai.getText();
-            String kkmSiswa = "75";
-            String ketSiswa = "Hebat";
+            int nilaiSiswa = Integer.parseInt(nilaiNilai.getText());
+            int kkmSiswa = 75;
+            String ketSiswa = nilaiSiswa < kkmSiswa ? "Kurang" : "Hebat";
 
-            Nilai nilai = new Nilai(nama, nis, semester, mataPelajaran, nilaiSiswa, kkmSiswa, ketSiswa);
+            Nilai nilai = new Nilai(nama, nis, kelas, semester, mataPelajaran, nilaiSiswa, kkmSiswa, ketSiswa);
 
             try {
                 AppQuery.addNilai(nilai);
@@ -1189,9 +1239,14 @@ public class DashboardController {
         upBtnNilai.setOnAction(event -> {
             Nilai selectedNilai = tableViewNilai.getSelectionModel().getSelectedItem();
             if (selectedNilai != null) {
-                selectedNilai.setNilaiSiswa(nilaiNilai.getText());
-                // selectedNilai.setKkmSiswa(kkmNilai.getText());
-                // selectedNilai.setKetSiswa(ketNilai.getText());
+                int nilaiSiswa = Integer.parseInt(nilaiNilai.getText());
+                int kkmSiswa = 75;
+                String ketSiswa = nilaiSiswa < kkmSiswa ? "Kurang" : "Hebat";
+
+                selectedNilai.setNilaiSiswa(nilaiSiswa);
+                selectedNilai.setMataPelajaran(ComboBoxNilai.getValue());
+                selectedNilai.setKkmSiswa(kkmSiswa);
+                selectedNilai.setKetSiswa(ketSiswa);
 
                 try {
                     AppQuery.upNilai(selectedNilai);
@@ -1222,6 +1277,22 @@ public class DashboardController {
         pdfBtnNilai.setDisable(searchField.getText().trim().isEmpty());
 
         pdfBtnNilai.setOnAction(event -> createPDFnilai());
+    }
+
+    public void rowSelectionListenerToNilaiTable() {
+        tableViewNilai.getSelectionModel().selectedItemProperty()
+                .addListener((obs, oldSelection, newSelection) -> {
+                    if (newSelection != null) {
+                        Nilai selectedNilai = (Nilai) newSelection;
+
+                        namaNilai.setText(selectedNilai.getNama());
+                        nisNilai.setText(selectedNilai.getNis());
+                        kelasNilai.setText(selectedNilai.getKelas());
+                        smtNilai.setText(selectedNilai.getSemester());
+                        ComboBoxNilai.setValue(selectedNilai.getMataPelajaran());
+                        nilaiNilai.setText(String.valueOf(selectedNilai.getNilaiSiswa()));
+                    }
+                });
     }
 
     public void createPDFnilai() {
@@ -1285,6 +1356,7 @@ public class DashboardController {
                 Paragraph dataDiri = new Paragraph(
                         "Nama: " + firstNilai.getNama() + "\n" +
                                 "NIS: " + firstNilai.getNis() + "\n" +
+                                "Kelas: " + firstNilai.getKelas() + "\n" +
                                 "Semester: " + firstNilai.getSemester());
                 dataDiri.setSpacingAfter(10);
                 document.add(dataDiri);
@@ -1307,8 +1379,8 @@ public class DashboardController {
 
             for (Nilai nilai : tableViewNilai.getItems()) {
                 nilaiTable.addCell(nilai.getMataPelajaran());
-                nilaiTable.addCell(nilai.getNilaiSiswa());
-                nilaiTable.addCell(nilai.getKkmSiswa());
+                nilaiTable.addCell(Integer.toString(nilai.getNilaiSiswa()));
+                nilaiTable.addCell(Integer.toString(nilai.getKkmSiswa()));
                 nilaiTable.addCell(nilai.getKetSiswa());
             }
 
@@ -1339,6 +1411,7 @@ public class DashboardController {
         suratColumn.setCellValueFactory(new PropertyValueFactory<>("surah"));
         banyakAyatColumn.setCellValueFactory(new PropertyValueFactory<>("banyakayat"));
         tanggalColumn.setCellValueFactory(new PropertyValueFactory<>("tanggal"));
+        nisColumn.setCellValueFactory(new PropertyValueFactory<>("nis"));
 
         try {
             List<NilaiHafalan> nilaiHaf = AppQuery.loadNilaiHafalanFromDatabase();
@@ -1420,6 +1493,22 @@ public class DashboardController {
         });
 
         pdfBtnHafalan.setOnAction(event -> createPDFHaf());
+    }
+
+    public void rowSelectionListenerToNilaiHafTable() {
+        TableHafalan.getSelectionModel().selectedItemProperty()
+                .addListener((obs, oldSelection, newSelection) -> {
+                    if (newSelection != null) {
+                        NilaiHafalan selectedNilaiHaf = (NilaiHafalan) newSelection;
+
+                        namaHafalan.setText(selectedNilaiHaf.getNama());
+                        nisHafalan.setText(String.valueOf(selectedNilaiHaf.getNis()));
+                        kelasHafalan.setText(selectedNilaiHaf.getKelas());
+                        namaSurat.setText(selectedNilaiHaf.getSurah());
+                        BanyakAyat.setText(String.valueOf(selectedNilaiHaf.getBanyakayat()));
+                        tanggalHafalan.setValue(selectedNilaiHaf.getTanggal());
+                    }
+                });
     }
 
     public void createPDFHaf() {

@@ -1,5 +1,6 @@
 package com.mycompany.loginprokon.data;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -76,15 +77,29 @@ public class AppQuery {
 
   public static void insertJadwal(Jadwal jadwal, Guru guru) throws SQLException {
     String sql = "INSERT INTO jadwal_pelajaran (mapel_jadwal, pukul_jadwal, kelas_jadwal, hari_jadwal, NIP) VALUES (?, ?, ?, ?, ?)";
+    String selectSql = "SELECT admin.*, guru.Nama, guru.NIP FROM admin JOIN guru ON admin.NIP = guru.NIP";
 
-    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+    Connection con = DBConnection.getDBConn();
+    String NIP = null;
+
+    try {
+      PreparedStatement prepare = con.prepareStatement(selectSql);
+      ResultSet result = prepare.executeQuery();
+
+      if (result.next()) {
+        NIP = result.getString("NIP");
+      }
+
+      PreparedStatement pstmt = con.prepareStatement(sql);
       pstmt.setString(1, jadwal.getMapel());
       pstmt.setString(2, jadwal.getPukul());
       pstmt.setString(3, jadwal.getKelas());
       pstmt.setString(4, jadwal.getHari());
-      pstmt.setInt(5, Integer.parseInt(guru.getNIP()));
+      pstmt.setString(5, NIP);
 
       pstmt.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
   }
 
@@ -242,7 +257,7 @@ public class AppQuery {
   }
 
   public static List<Nilai> loadNilaiFromDatabase(String filterCondition) throws SQLException {
-    String sql = "SELECT nama, nis, semester, mata_pelajaran, nilai, kkm, ket "
+    String sql = "SELECT nama, nis, kelas, semester, mata_pelajaran, nilai, kkm, ket "
         + "FROM nilai_pelajaran ";
     if (filterCondition != null && !filterCondition.isEmpty()) {
       sql += "WHERE " + filterCondition;
@@ -256,13 +271,14 @@ public class AppQuery {
       while (rs.next()) {
         String nama = rs.getString("nama");
         String nis = rs.getString("nis");
+        String kelas = rs.getString("kelas");
         String semester = rs.getString("semester");
         String mataPelajaran = rs.getString("mata_pelajaran");
-        String nilaiSiswa = rs.getString("nilai");
-        String kkmSiswa = rs.getString("kkm");
+        Integer nilaiSiswa = rs.getInt("nilai");
+        Integer kkmSiswa = rs.getInt("kkm");
         String ketSiswa = rs.getString("ket");
 
-        Nilai nilai = new Nilai(nama, nis, semester, mataPelajaran, nilaiSiswa, kkmSiswa, ketSiswa);
+        Nilai nilai = new Nilai(nama, nis, kelas, semester, mataPelajaran, nilaiSiswa, kkmSiswa, ketSiswa);
         nilaiList.add(nilai);
       }
     }
@@ -270,14 +286,15 @@ public class AppQuery {
   }
 
   public static void addNilai(Nilai nilai) throws SQLException {
-    String sql = "INSERT INTO nilai_pelajaran (nama, nis, semester, mata_pelajaran, nilai, kkm, ket) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO nilai_pelajaran (nama, nis, kelas, semester, mata_pelajaran, nilai, kkm, ket) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
       pstmt.setString(1, nilai.getNama());
       pstmt.setString(2, nilai.getNis());
+      pstmt.setString(2, nilai.getKelas());
       pstmt.setString(3, nilai.getSemester());
       pstmt.setString(4, nilai.getMataPelajaran());
-      pstmt.setString(5, nilai.getNilaiSiswa());
-      pstmt.setString(6, nilai.getKkmSiswa());
+      pstmt.setInt(5, nilai.getNilaiSiswa());
+      pstmt.setInt(6, nilai.getKkmSiswa());
       pstmt.setString(7, nilai.getKetSiswa());
       pstmt.executeUpdate();
     }
@@ -292,14 +309,15 @@ public class AppQuery {
   }
 
   public static void dltNilai(Nilai nilai) throws SQLException {
-    String sql = "DELETE FROM nilai_pelajaran WHERE nama = ? AND nis = ? AND semester = ? AND mata_pelajaran = ? AND nilai = ? AND kkm = ? AND ket = ?";
+    String sql = "DELETE FROM nilai_pelajaran WHERE nama = ? AND nis = ? AND kelas = ? AND semester = ? AND mata_pelajaran = ? AND nilai = ? AND kkm = ? AND ket = ?";
     try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
       pstmt.setString(1, nilai.getNama());
       pstmt.setString(2, nilai.getNis());
+      pstmt.setString(3, nilai.getKelas());
       pstmt.setString(3, nilai.getSemester());
       pstmt.setString(4, nilai.getMataPelajaran());
-      pstmt.setString(5, nilai.getNilaiSiswa());
-      pstmt.setString(6, nilai.getKkmSiswa());
+      pstmt.setInt(5, nilai.getNilaiSiswa());
+      pstmt.setInt(6, nilai.getKkmSiswa());
       pstmt.setString(7, nilai.getKetSiswa());
       pstmt.executeUpdate();
     }
@@ -308,8 +326,8 @@ public class AppQuery {
   public static void upNilai(Nilai nilai) throws SQLException {
     String sql = "UPDATE nilai_pelajaran SET nilai = ?, kkm = ?, ket = ? WHERE nama = ? AND nis = ? AND semester = ? AND mata_pelajaran = ?";
     try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
-      pstmt.setString(1, nilai.getNilaiSiswa());
-      pstmt.setString(2, nilai.getKkmSiswa());
+      pstmt.setInt(1, nilai.getNilaiSiswa());
+      pstmt.setInt(2, nilai.getKkmSiswa());
       pstmt.setString(3, nilai.getKetSiswa());
       pstmt.setString(4, nilai.getNama());
       pstmt.setString(5, nilai.getNis());
@@ -330,13 +348,14 @@ public class AppQuery {
         while (rs.next()) {
           String nama = rs.getString("nama");
           String nis = rs.getString("nis");
+          String kelas = rs.getString("kelas");
           String semester = rs.getString("semester");
           String mataPelajaran = rs.getString("mata_pelajaran");
-          String nilai = rs.getString("nilai");
-          String kkm = rs.getString("kkm");
+          Integer nilai = rs.getInt("nilai");
+          Integer kkm = rs.getInt("kkm");
           String ket = rs.getString("ket");
 
-          Nilai nilaiObject = new Nilai(nama, nis, semester, mataPelajaran, nilai, kkm, ket);
+          Nilai nilaiObject = new Nilai(nama, nis, kelas, semester, mataPelajaran, nilai, kkm, ket);
           filteredNilaiList.add(nilaiObject);
         }
       }

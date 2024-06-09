@@ -2,6 +2,8 @@ package com.mycompany.loginprokon;
 
 import com.mycompany.loginprokon.DashboardController.JadwalController;
 import com.mycompany.loginprokon.data.DBConnection;
+import com.mycompany.loginprokon.model.Guru;
+
 import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -47,7 +49,7 @@ public class PrimaryController {
     private PreparedStatement prepare;
     private ResultSet result;
 
-    public void loginAdmin(ActionEvent event) {
+    public Guru loginAdmin(ActionEvent event) {
         String sql = "SELECT admin.*, guru.Nama, guru.NIP FROM admin JOIN guru ON admin.NIP = guru.NIP WHERE admin.username = ? AND admin.password = ?";
         Connection con = DBConnection.getDBConn();
 
@@ -70,6 +72,8 @@ public class PrimaryController {
                 alert.showAndWait();
             } else {
                 if (result.next()) {
+                    String NIP = result.getString("NIP");
+
                     String namaGuru = result.getString("Nama");
                     int nip = result.getInt("NIP");
 
@@ -98,6 +102,7 @@ public class PrimaryController {
                     stage.setHeight(height);
                     stage.setScene(scene);
                     stage.show();
+                    return new Guru(NIP, null, null);
                 } else {
                     alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Error");
@@ -109,5 +114,6 @@ public class PrimaryController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 }

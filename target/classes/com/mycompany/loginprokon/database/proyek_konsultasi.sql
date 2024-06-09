@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 07, 2024 at 07:58 AM
+-- Generation Time: Jun 09, 2024 at 04:24 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -84,15 +84,15 @@ CREATE TABLE `jadwal_pelajaran` (
 --
 
 INSERT INTO `jadwal_pelajaran` (`id`, `mapel_jadwal`, `pukul_jadwal`, `kelas_jadwal`, `hari_jadwal`, `NIP`) VALUES
-(1, 'Bahasa Indonesia', '08:00', '3', 'Rabu', 111111),
-(7, 'Bahasa Indonesia', '08:00', '3', 'Rabu', 111111),
-(14, 'Sejarah Islam', '20:00', '3', 'Kamis', 111111),
-(20, 'Bahasa Indonesia', '08:00', '3', 'Rabu', 111111),
-(21, 'Sejarah Islam', '10:00', '4', 'Senin', 111111),
-(22, 'Sejarah Islam', '10:00', '4', 'Senin', 111111),
 (23, 'Matematika', '12:00', '4', 'Jumat', 111111),
-(26, 'Bahasa Indonesia', '10:00', '4', 'Kamis', 111111),
-(27, 'Matematika', '10:00', '2', 'Selasa', 111111);
+(28, 'Matematika', '08:00', '3', 'Sabtu', 111111),
+(30, 'Bahasa Indonesia', '08:00', '2', 'Kamis', 111111),
+(31, 'Matematika', '08:00', '2', 'Selasa', 111111),
+(32, 'Matematika', '08:00', '2', 'Rabu', 111111),
+(34, 'Sejarah Islam', '08:00', '2', 'Senin', 111111),
+(35, 'Matematika', '15:00', '2', 'Kamis', 111111),
+(36, 'Sejarah Islam', '12:00', '3', 'Selasa', 111111),
+(37, 'Sejarah Islam', '12:00', '3', 'Senin', 111111);
 
 -- --------------------------------------------------------
 
@@ -113,7 +113,8 @@ CREATE TABLE `kalenderisasi` (
 
 INSERT INTO `kalenderisasi` (`id_kalender`, `tanggal_acara`, `keterangan_acara`, `semester`) VALUES
 (3, 'May 8, 2024 to Jun 5, 2024', 'PPDB 2024', 'Semester Ganjil'),
-(11, 'May 30, 2024 to May 30, 2024', 'Pembagian Rapot', 'Semester Ganjil');
+(11, 'May 30, 2024 to May 30, 2024', 'Pembagian Rapot', 'Semester Ganjil'),
+(12, 'Jul 9, 2024 to Jul 9, 2024', 'Pembagian Rapott', 'Semester Ganjil');
 
 -- --------------------------------------------------------
 
@@ -139,7 +140,8 @@ INSERT INTO `nilai_hafalan_alquran` (`idnilaihaf`, `Surat`, `Ayat`, `NamaSiswa`,
 (8, 'al-fill', 40, 'nama', '2024-06-29', 3, '3'),
 (9, 'al-fill', 200, 'ridhwan', '2024-06-08', 200, '3'),
 (10, 'al-falaq', 75, 'asdasdasda', '2024-06-28', 3, '4a'),
-(11, 'al-fill', 25, 'awqasda', '2024-06-29', 200, '4a');
+(11, 'al-fill', 25, 'awqasda', '2024-06-29', 200, '4a'),
+(12, 'alhumazah', 100, 'ridhwan', '2024-06-07', 100, '3');
 
 -- --------------------------------------------------------
 
@@ -151,6 +153,7 @@ CREATE TABLE `nilai_pelajaran` (
   `id_pelajaran` int(100) NOT NULL,
   `nama` varchar(255) NOT NULL,
   `nis` int(100) NOT NULL,
+  `kelas` varchar(255) NOT NULL,
   `semester` int(100) NOT NULL,
   `mata_pelajaran` varchar(255) NOT NULL,
   `nilai` int(100) NOT NULL,
@@ -162,15 +165,14 @@ CREATE TABLE `nilai_pelajaran` (
 -- Dumping data for table `nilai_pelajaran`
 --
 
-INSERT INTO `nilai_pelajaran` (`id_pelajaran`, `nama`, `nis`, `semester`, `mata_pelajaran`, `nilai`, `kkm`, `ket`) VALUES
-(83, 'Agis', 1, 5, 'Bahasa Indonesia', 100, 75, 'Hebat'),
-(84, 'Agis', 1, 5, 'Matematika', 100, 75, 'Hebat'),
-(85, 'Agis', 1, 5, 'Sejarah Islam', 100, 75, 'Hebat'),
-(86, 'Satria', 2, 5, 'Bahasa Indonesia', 100, 75, 'Hebat'),
-(87, 'Satria', 2, 5, 'Matematika', 100, 75, 'Hebat'),
-(88, 'Satria', 2, 5, 'Sejarah Islam', 100, 75, 'Hebat'),
-(89, 'Farhan', 3, 5, 'Bahasa Indonesia', 100, 75, 'Hebat'),
-(90, 'Farhan', 3, 5, 'Matematika', 100, 75, 'Hebat');
+INSERT INTO `nilai_pelajaran` (`id_pelajaran`, `nama`, `nis`, `kelas`, `semester`, `mata_pelajaran`, `nilai`, `kkm`, `ket`) VALUES
+(83, 'Agis', 1, '3A', 5, 'Bahasa Indonesia', 86, 75, 'Hebat'),
+(84, 'Agis', 1, '3A', 5, 'Matematika', 56, 75, 'Kurang'),
+(85, 'Agis', 1, '3A', 5, 'Sejarah Islam', 56, 75, 'Kurang'),
+(87, 'Satria', 2, '4A', 5, 'Matematika', 56, 75, 'Kurang'),
+(88, 'Satria', 2, '4A', 5, 'Sejarah Islam', 100, 75, 'Hebat'),
+(89, 'Farhan', 3, '4A', 5, 'Bahasa Indonesia', 56, 75, 'Hebat'),
+(90, 'Farhan', 3, '4A', 5, 'Matematika', 100, 75, 'Hebat');
 
 -- --------------------------------------------------------
 
@@ -259,19 +261,19 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `jadwal_pelajaran`
 --
 ALTER TABLE `jadwal_pelajaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `kalenderisasi`
 --
 ALTER TABLE `kalenderisasi`
-  MODIFY `id_kalender` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id_kalender` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `nilai_hafalan_alquran`
 --
 ALTER TABLE `nilai_hafalan_alquran`
-  MODIFY `idnilaihaf` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `idnilaihaf` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `nilai_pelajaran`
