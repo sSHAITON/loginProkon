@@ -75,6 +75,28 @@ public class AppQuery {
     }
   }
 
+  public static void updateAcara(Acara oldAcara, Acara newAcara) throws SQLException {
+    String sql = "UPDATE kalenderisasi SET keterangan_acara = ?, semester = ?, tanggal_acara = ? WHERE keterangan_acara = ? AND semester = ? AND tanggal_acara = ?";
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+      pstmt.setString(1, newAcara.getKeteranganAcara());
+      pstmt.setString(2, newAcara.getSemester());
+      pstmt.setString(3, newAcara.getTanggalAsString());
+      pstmt.setString(4, oldAcara.getKeteranganAcara());
+      pstmt.setString(5, oldAcara.getSemester());
+      pstmt.setString(6, oldAcara.getTanggalAsString());
+
+      pstmt.executeUpdate();
+    }
+  }
+
+  public static void clearAcara() throws SQLException {
+    String sql = "DELETE FROM kalenderisasi";
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+      pstmt.executeUpdate();
+
+    }
+  }
+
   public static void insertJadwal(Jadwal jadwal, Guru guru) throws SQLException {
     String sql = "INSERT INTO jadwal_pelajaran (mapel_jadwal, pukul_jadwal, kelas_jadwal, hari_jadwal, NIP) VALUES (?, ?, ?, ?, ?)";
     String selectSql = "SELECT admin.*, guru.Nama, guru.NIP FROM admin JOIN guru ON admin.NIP = guru.NIP";
@@ -154,13 +176,11 @@ public class AppQuery {
         "WHERE mapel_jadwal = ? AND pukul_jadwal = ? AND kelas_jadwal = ? AND hari_jadwal = ?";
 
     try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
-      // Set new values
       pstmt.setString(1, newJadwal.getMapel());
       pstmt.setString(2, newJadwal.getPukul());
       pstmt.setString(3, newJadwal.getKelas());
       pstmt.setString(4, newJadwal.getHari());
 
-      // Set old values
       pstmt.setString(5, oldJadwal.getMapel());
       pstmt.setString(6, oldJadwal.getPukul());
       pstmt.setString(7, oldJadwal.getKelas());
@@ -415,6 +435,35 @@ public class AppQuery {
       pstmt.executeUpdate();
     }
 
+  }
+
+  public static void updateNilai(NilaiHafalan oldNilai, NilaiHafalan newNilai) throws SQLException {
+    String sql = "UPDATE nilai_hafalan_alquran SET namaSiswa = ?, nis = ?, surat = ?, tanggalhafalan = ?, kelas = ?, ayat = ? WHERE namaSiswa = ? AND nis = ? AND surat = ? AND tanggalhafalan = ? AND kelas = ? AND ayat = ?";
+
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+      pstmt.setString(1, newNilai.getNama());
+      pstmt.setInt(2, newNilai.getNis());
+      pstmt.setString(3, newNilai.getSurah());
+      pstmt.setDate(4, newNilai.getTanggalAsDate());
+      pstmt.setString(5, newNilai.getKelas());
+      pstmt.setInt(6, newNilai.getBanyakayat());
+
+      pstmt.setString(7, oldNilai.getNama());
+      pstmt.setInt(8, oldNilai.getNis());
+      pstmt.setString(9, oldNilai.getSurah());
+      pstmt.setDate(10, oldNilai.getTanggalAsDate());
+      pstmt.setString(11, oldNilai.getKelas());
+      pstmt.setInt(12, oldNilai.getBanyakayat());
+
+      pstmt.executeUpdate();
+    }
+  }
+
+  public static void clearNilai() throws SQLException {
+    String sql = "DELETE FROM nilai_hafalan_alquran";
+    try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
+      pstmt.executeUpdate();
+    }
   }
 
   public static List<NilaiHafalan> searchNilaiHafalan(String searchText) throws SQLException {

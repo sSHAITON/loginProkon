@@ -148,6 +148,12 @@ public class DashboardController {
     private Button deleteBtnKalender;
 
     @FXML
+    private Button updateBtnKalender;
+
+    @FXML
+    private Button clearBtnKalender;
+
+    @FXML
     private Button jadwalpelBtn;
 
     @FXML
@@ -407,6 +413,12 @@ public class DashboardController {
 
     @FXML
     private Button delBtnHafalan;
+
+    @FXML
+    private Button updateBtnHafalan;
+
+    @FXML
+    private Button clearBtnHafalan;
 
     @FXML
     private TableColumn<NilaiHafalan, String> suratColumn;
@@ -977,13 +989,14 @@ public class DashboardController {
                     }
                 }
 
+                document.close();
+
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("PDF Creation");
                 alert.setHeaderText(null);
                 alert.setContentText("PDF created successfully.");
                 alert.showAndWait();
 
-                document.close();
             } catch (DocumentException | IOException e) {
                 e.printStackTrace();
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -1048,6 +1061,53 @@ public class DashboardController {
                     AppQuery.deleteAcara(selectedAcara);
                 } catch (SQLException e) {
                     System.out.println("Failed to delete acara: " + e.getMessage());
+                }
+            }
+        });
+
+        updateBtnKalender.setOnAction(event -> {
+            Acara selectedAcara = tableViewKalender.getSelectionModel().getSelectedItem();
+            if (selectedAcara != null) {
+                String keteranganAcara = ketAcara.getText();
+                String semester = semesterComboBox.getValue();
+                DateRange tanggal = tanggalKalenderAkademik.getValue();
+
+                if (keteranganAcara == null || keteranganAcara.trim().isEmpty() ||
+                        semester == null || semester.trim().isEmpty() ||
+                        tanggal == null) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Please fill in all fields");
+
+                    alert.showAndWait();
+                    return;
+                }
+
+                Acara newAcara = new Acara(keteranganAcara, semester, tanggal);
+                tableViewKalender.getItems().set(tableViewKalender.getItems().indexOf(selectedAcara), newAcara);
+
+                try {
+                    AppQuery.updateAcara(selectedAcara, newAcara);
+                } catch (SQLException e) {
+                    System.out.println("Failed to update acara: " + e.getMessage());
+                }
+            }
+        });
+
+        clearBtnKalender.setOnAction(event -> {
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to clear the calendar?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                tableViewKalender.getItems().clear();
+                try {
+                    AppQuery.clearAcara();
+                } catch (SQLException e) {
+                    System.out.println("Failed to clear acara: " + e.getMessage());
                 }
             }
         });
@@ -1480,12 +1540,82 @@ public class DashboardController {
             }
         });
 
+        updateBtnHafalan.setOnAction(event -> {
+            NilaiHafalan selectedNilaiHafalan = TableHafalan.getSelectionModel().getSelectedItem();
+            if (selectedNilaiHafalan != null) {
+                String nama = namaHafalan.getText();
+                Integer nis = Integer.valueOf(nisHafalan.getText());
+                String surah = namaSurat.getText();
+                String kelas = kelasHafalan.getText();
+                Integer banyakayat = Integer.valueOf(BanyakAyat.getText());
+                LocalDate tanggal = tanggalHafalan.getValue();
+
+                if (nama == null || nama.trim().isEmpty() ||
+                        surah == null || surah.trim().isEmpty() ||
+                        kelas == null || kelas.trim().isEmpty()) {
+
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Please fill in all fields");
+                    alert.showAndWait();
+                } else {
+                    NilaiHafalan newNilai = new NilaiHafalan(nama, nis, surah, tanggal, kelas, banyakayat);
+                    try {
+                        AppQuery.updateNilai(selectedNilaiHafalan, newNilai);
+                        TableHafalan.getItems().set(TableHafalan.getItems().indexOf(selectedNilaiHafalan), newNilai);
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Success");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Data berhasil diupdate");
+                        alert.showAndWait();
+                    } catch (SQLException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Gagal mengupdate data: " + e.getMessage());
+                        alert.showAndWait();
+                    }
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Please select a record to update");
+                alert.showAndWait();
+            }
+        });
+
+        clearBtnHafalan.setOnAction(event -> {
+            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmationAlert.setTitle("Confirmation");
+            confirmationAlert.setHeaderText(null);
+            confirmationAlert.setContentText("Are you sure you want to clear the table?");
+
+            Optional<ButtonType> result = confirmationAlert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                try {
+                    AppQuery.clearNilai();
+                    TableHafalan.getItems().clear();
+                } catch (SQLException e) {
+                    System.out.println("Failed to clear nilai: " + e.getMessage());
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Nilai Deletion Failed");
+                    alert.setContentText("Failed to delete all nilai: " + e.getMessage());
+                    alert.showAndWait();
+                }
+            } else {
+                // do nothing
+            }
+        });
+
         searchHafalan.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 List<NilaiHafalan> filteredNilaihafList = AppQuery.searchNilaiHafalan(newValue);
                 TableHafalan.getItems().setAll(filteredNilaihafList);
 
-                pdfBtnNilai.setDisable(newValue.trim().isEmpty());
+                pdfBtnHafalan.setDisable(newValue.trim().isEmpty());
                 initializeHafalanChart();
             } catch (SQLException e) {
                 System.out.println("Failed to search nilai: " + e.getMessage());
@@ -1557,6 +1687,23 @@ public class DashboardController {
             judul.setSpacingAfter(10);
             document.add(judul);
 
+            if (!TableHafalan.getItems().isEmpty()) {
+                NilaiHafalan firstNilai = TableHafalan.getItems().get(0);
+
+                Font dataDiriFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+                Paragraph dataDiriTitle = new Paragraph("DATA DIRI", dataDiriFont);
+                dataDiriTitle.setSpacingBefore(10);
+                dataDiriTitle.setSpacingAfter(5);
+                document.add(dataDiriTitle);
+
+                Paragraph dataDiri = new Paragraph(
+                        "Nama: " + firstNilai.getNama() + "\n" +
+                                "NIS: " + firstNilai.getNis() + "\n" +
+                                "Kelas: " + firstNilai.getKelas() + "\n");
+                dataDiri.setSpacingAfter(10);
+                document.add(dataDiri);
+            }
+
             PdfPTable table = new PdfPTable(3);
             table.setWidthPercentage(100);
             table.setSpacingBefore(10);
@@ -1574,6 +1721,14 @@ public class DashboardController {
             document.add(table);
 
             document.close();
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("PDF Creation");
+            alert.setHeaderText(null);
+            alert.setContentText("PDF created successfully.");
+            alert.showAndWait();
+
+            System.out.println("PDF Created successfully.");
 
         } catch (Exception e) {
             e.printStackTrace();
