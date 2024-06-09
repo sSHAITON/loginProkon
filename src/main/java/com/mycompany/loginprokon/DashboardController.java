@@ -67,7 +67,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import javafx.scene.control.Alert;
+
 public class DashboardController {
+
+    private void showAlert(String title, String message, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
     @FXML
     private Button logoutButton;
@@ -512,7 +521,6 @@ public class DashboardController {
                 tableViewNilai.getItems().setAll(nilaiList);
                 List<NilaiHafalan> nilaiHafalanList = AppQuery.loadNilaiHafalanFromDatabase();
                 TableHafalan.getItems().setAll(nilaiHafalanList);
-                initializeHafalanChart();
             } catch (SQLException el) {
                 System.out.println("Failed to load acara from database: " + el.getMessage());
 
@@ -1491,24 +1499,15 @@ public class DashboardController {
             if (nama == null || nama.trim().isEmpty() ||
                     surah == null || surah.trim().isEmpty() ||
                     kelas == null || kelas.trim().isEmpty()) {
-
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText(null);
-                alert.setContentText("Please fill in all fields");
-                alert.showAndWait();
+                showAlert("Error", "Please fill in all fields", Alert.AlertType.ERROR);
             } else {
                 NilaiHafalan nilai = new NilaiHafalan(nama, nis, surah, tanggal, kelas, banyakayat);
                 try {
                     AppQuery.insertNilai(nilai);
                     TableHafalan.getItems().add(nilai);
+                    initializeHafalanChart();
                 } catch (SQLException e) {
-                    System.out.println("Failed to insert nilai: " + e.getMessage());
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText("Nilai Insertion Failed");
-                    alert.setContentText("Failed to add nilai: " + e.getMessage());
-                    alert.showAndWait();
+                    showAlert("Error", "Failed to add nilai: " + e.getMessage(), Alert.AlertType.ERROR);
                 }
             }
         });
@@ -1519,24 +1518,12 @@ public class DashboardController {
                 try {
                     AppQuery.deleteNilai(selectedNilaiHafalan);
                     TableHafalan.getItems().remove(selectedNilaiHafalan);
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Success");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Data berhasil dihapus");
-                    alert.showAndWait();
+                    showAlert("Success", "Data berhasil dihapus", Alert.AlertType.INFORMATION);
                 } catch (SQLException e) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Gagal menghapus data: " + e.getMessage());
-                    alert.showAndWait();
+                    showAlert("Error", "Gagal menghapus data: " + e.getMessage(), Alert.AlertType.ERROR);
                 }
             } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText(null);
-                alert.setContentText("Please select a record to delete");
-                alert.showAndWait();
+                showAlert("Error", "Please select a record to delete", Alert.AlertType.ERROR);
             }
         });
 
@@ -1553,36 +1540,20 @@ public class DashboardController {
                 if (nama == null || nama.trim().isEmpty() ||
                         surah == null || surah.trim().isEmpty() ||
                         kelas == null || kelas.trim().isEmpty()) {
-
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Please fill in all fields");
-                    alert.showAndWait();
+                    showAlert("Error", "Please fill in all fields", Alert.AlertType.ERROR);
                 } else {
                     NilaiHafalan newNilai = new NilaiHafalan(nama, nis, surah, tanggal, kelas, banyakayat);
                     try {
                         AppQuery.updateNilai(selectedNilaiHafalan, newNilai);
                         TableHafalan.getItems().set(TableHafalan.getItems().indexOf(selectedNilaiHafalan), newNilai);
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Success");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Data berhasil diupdate");
-                        alert.showAndWait();
+                        showAlert("Success", "Data berhasil diupdate", Alert.AlertType.INFORMATION);
+                        initializeHafalanChart(); // Update chart
                     } catch (SQLException e) {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Error");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Gagal mengupdate data: " + e.getMessage());
-                        alert.showAndWait();
+                        showAlert("Error", "Gagal mengupdate data: " + e.getMessage(), Alert.AlertType.ERROR);
                     }
                 }
             } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText(null);
-                alert.setContentText("Please select a record to update");
-                alert.showAndWait();
+                showAlert("Error", "Please select a record to update", Alert.AlertType.ERROR);
             }
         });
 
@@ -1591,22 +1562,15 @@ public class DashboardController {
             confirmationAlert.setTitle("Confirmation");
             confirmationAlert.setHeaderText(null);
             confirmationAlert.setContentText("Are you sure you want to clear the table?");
-
             Optional<ButtonType> result = confirmationAlert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 try {
                     AppQuery.clearNilai();
                     TableHafalan.getItems().clear();
+                    initializeHafalanChart();
                 } catch (SQLException e) {
-                    System.out.println("Failed to clear nilai: " + e.getMessage());
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText("Nilai Deletion Failed");
-                    alert.setContentText("Failed to delete all nilai: " + e.getMessage());
-                    alert.showAndWait();
+                    showAlert("Error", "Failed to clear nilai: " + e.getMessage(), Alert.AlertType.ERROR);
                 }
-            } else {
-                // do nothing
             }
         });
 
@@ -1614,23 +1578,28 @@ public class DashboardController {
             try {
                 List<NilaiHafalan> filteredNilaihafList = AppQuery.searchNilaiHafalan(newValue);
                 TableHafalan.getItems().setAll(filteredNilaihafList);
-
                 pdfBtnHafalan.setDisable(newValue.trim().isEmpty());
+                grafikHafBtn.setDisable(newValue.trim().isEmpty());
                 initializeHafalanChart();
             } catch (SQLException e) {
                 System.out.println("Failed to search nilai: " + e.getMessage());
             }
+
         });
 
+        pdfBtnHafalan.setDisable(searchHafalan.getText().isEmpty());
+        grafikHafBtn.setDisable(searchHafalan.getText().isEmpty());
+
         pdfBtnHafalan.setOnAction(event -> createPDFHaf());
+
+        initializeHafalanChart();
     }
 
     public void rowSelectionListenerToNilaiHafTable() {
         TableHafalan.getSelectionModel().selectedItemProperty()
                 .addListener((obs, oldSelection, newSelection) -> {
                     if (newSelection != null) {
-                        NilaiHafalan selectedNilaiHaf = (NilaiHafalan) newSelection;
-
+                        NilaiHafalan selectedNilaiHaf = newSelection;
                         namaHafalan.setText(selectedNilaiHaf.getNama());
                         nisHafalan.setText(String.valueOf(selectedNilaiHaf.getNis()));
                         kelasHafalan.setText(selectedNilaiHaf.getKelas());
@@ -1741,22 +1710,16 @@ public class DashboardController {
     }
 
     private void initializeHafalanChart() {
-        try {
-            List<NilaiHafalan> nilaiHafalanList = AppQuery.loadNilaiHafalanFromDatabase();
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
 
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
-
-            for (NilaiHafalan nilaiHafalan : nilaiHafalanList) {
-                series.getData()
-                        .add(new XYChart.Data<>(nilaiHafalan.getTanggalAsDate().toString(),
-                                nilaiHafalan.getBanyakayat()));
-            }
-
-            grafikHafalan.getData().clear();
-            grafikHafalan.getData().add(series);
-        } catch (SQLException e) {
-            System.out.println("Failed to load nilai hafalan from database: " + e.getMessage());
+        for (NilaiHafalan nilaiHafalan : TableHafalan.getItems()) {
+            series.getData()
+                    .add(new XYChart.Data<>(nilaiHafalan.getTanggal().toString(), nilaiHafalan.getBanyakayat()));
         }
+
+        grafikHafalan.getData().clear();
+        grafikHafalan.getData().add(series);
     }
+
     // end of monitoring hafalan
 }

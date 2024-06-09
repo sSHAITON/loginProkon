@@ -613,7 +613,7 @@
                                           <FontAwesomeIcon fill="#735146" glyphName="SEARCH" />
                                        </graphic>
                                     </Label>
-                                    <TextField fx:id="searchHafalan" layoutX="14.0" layoutY="66.0" promptText="Search" style="-fx-border-radius: 5px;" />
+                                    <TextField fx:id="searchHafalan" layoutX="14.0" layoutY="66.0" style="-fx-border-radius: 5px;" />
                                     <TextField fx:id="namaHafalan" layoutX="17.0" layoutY="122.0" prefHeight="26.0" prefWidth="142.0" styleClass="textfield">
                                        <stylesheets>
                                           <URL value="@dashboardstyle.css" />
