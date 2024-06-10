@@ -310,12 +310,12 @@ public class AppQuery {
     try (PreparedStatement pstmt = DBConnection.getDBConn().prepareStatement(sql)) {
       pstmt.setString(1, nilai.getNama());
       pstmt.setString(2, nilai.getNis());
-      pstmt.setString(2, nilai.getKelas());
-      pstmt.setString(3, nilai.getSemester());
-      pstmt.setString(4, nilai.getMataPelajaran());
-      pstmt.setInt(5, nilai.getNilaiSiswa());
-      pstmt.setInt(6, nilai.getKkmSiswa());
-      pstmt.setString(7, nilai.getKetSiswa());
+      pstmt.setString(3, nilai.getKelas());
+      pstmt.setString(4, nilai.getSemester());
+      pstmt.setString(5, nilai.getMataPelajaran());
+      pstmt.setInt(6, nilai.getNilaiSiswa());
+      pstmt.setInt(7, nilai.getKkmSiswa());
+      pstmt.setString(8, nilai.getKetSiswa());
       pstmt.executeUpdate();
     }
   }
@@ -334,11 +334,11 @@ public class AppQuery {
       pstmt.setString(1, nilai.getNama());
       pstmt.setString(2, nilai.getNis());
       pstmt.setString(3, nilai.getKelas());
-      pstmt.setString(3, nilai.getSemester());
-      pstmt.setString(4, nilai.getMataPelajaran());
-      pstmt.setInt(5, nilai.getNilaiSiswa());
-      pstmt.setInt(6, nilai.getKkmSiswa());
-      pstmt.setString(7, nilai.getKetSiswa());
+      pstmt.setString(4, nilai.getSemester());
+      pstmt.setString(5, nilai.getMataPelajaran());
+      pstmt.setInt(6, nilai.getNilaiSiswa());
+      pstmt.setInt(7, nilai.getKkmSiswa());
+      pstmt.setString(8, nilai.getKetSiswa());
       pstmt.executeUpdate();
     }
   }

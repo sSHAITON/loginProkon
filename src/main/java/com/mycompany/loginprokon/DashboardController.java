@@ -1,36 +1,52 @@
 package com.mycompany.loginprokon;
 
-import com.mycompany.loginprokon.model.Acara;
-import com.mycompany.loginprokon.model.Jadwal;
-import com.mycompany.loginprokon.model.Nilai;
-import com.mycompany.loginprokon.model.NilaiHafalan;
-import com.mycompany.loginprokon.model.Siswa;
-import com.mycompany.loginprokon.model.Guru;
-
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.dlsc.gemsfx.TimePicker;
 import com.dlsc.gemsfx.daterange.DateRange;
 import com.dlsc.gemsfx.daterange.DateRangePicker;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
+import com.mycompany.loginprokon.data.AppQuery;
+import com.mycompany.loginprokon.model.Acara;
+import com.mycompany.loginprokon.model.Guru;
+import com.mycompany.loginprokon.model.Jadwal;
+import com.mycompany.loginprokon.model.Nilai;
+import com.mycompany.loginprokon.model.NilaiHafalan;
+import com.mycompany.loginprokon.model.Siswa;
 
+import javafx.animation.PauseTransition;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -40,34 +56,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import com.mycompany.loginprokon.data.AppQuery;
-import com.mycompany.loginprokon.data.DBConnection;
-import javafx.collections.ObservableList;
-import javafx.animation.PauseTransition;
 import javafx.util.Duration;
-
-import com.itextpdf.text.*;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-
-import javafx.scene.control.Alert;
 
 public class DashboardController {
 
@@ -687,13 +682,22 @@ public class DashboardController {
 
             addBtnJadwal.setOnAction(event -> addJadwal());
 
-            deleteBtnJadwal.setOnAction(event -> deleteJadwal());
+            deleteBtnJadwal.setOnAction(event -> {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText(null);
+                alert.setContentText("Apakah anda yakin ingin menghapus jadwal?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    deleteJadwal();
+                }
+            });
 
             clearBtnJadwal.setOnAction(event -> {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Confirmation");
                 alert.setHeaderText(null);
-                alert.setContentText("Are you sure you want to clear the schedule?");
+                alert.setContentText("Apakah anda yakin ingin menghapus jadwal?");
 
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
@@ -701,7 +705,17 @@ public class DashboardController {
                 }
             });
 
-            updateBtnJadwal.setOnAction(event -> updateJadwal());
+            updateBtnJadwal.setOnAction(event -> {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText(null);
+                alert.setContentText("Apakah anda yakin ingin mengupdate jadwal?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    updateJadwal();
+                }
+            });
+
             pdfBtnJadwal.setOnAction(event -> {
                 try {
                     createJadwalPdf(AppQuery.loadJadwalFromDatabase(NIPLabel.getText()));
@@ -725,7 +739,7 @@ public class DashboardController {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText(null);
-                alert.setContentText("Please fill in all fields.");
+                alert.setContentText("Tolong Isi Setiap Field!.");
                 alert.showAndWait();
                 return;
             }
@@ -750,7 +764,7 @@ public class DashboardController {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Success");
                     alert.setHeaderText(null);
-                    alert.setContentText("Schedule deleted successfully.");
+                    alert.setContentText("Jadwal Berhasil Dihapus.");
                     alert.showAndWait();
                 } catch (SQLException e) {
                     System.out.println("Failed to delete jadwal: " + e.getMessage());
@@ -767,7 +781,7 @@ public class DashboardController {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("No Selection");
                 alert.setHeaderText(null);
-                alert.setContentText("Please select a schedule to delete.");
+                alert.setContentText("Tolong pilih jadwal yang ingin dihapus!");
                 alert.showAndWait();
             }
         }
@@ -801,7 +815,7 @@ public class DashboardController {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
                     alert.setHeaderText(null);
-                    alert.setContentText("Please fill in all fields.");
+                    alert.setContentText("Tolong isi setiap field.");
                     alert.showAndWait();
                     return;
                 }
@@ -817,7 +831,7 @@ public class DashboardController {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Success");
                     alert.setHeaderText(null);
-                    alert.setContentText("Schedule updated successfully.");
+                    alert.setContentText("Jadwal Berhasil diupdate.");
                     alert.showAndWait();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -835,7 +849,7 @@ public class DashboardController {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("No Selection");
                 alert.setHeaderText(null);
-                alert.setContentText("Please select a schedule to update.");
+                alert.setContentText("Tolong pilih jadwal.");
                 alert.showAndWait();
             }
         }
@@ -1002,15 +1016,15 @@ public class DashboardController {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("PDF Creation");
                 alert.setHeaderText(null);
-                alert.setContentText("PDF created successfully.");
+                alert.setContentText("PDF Berhasil Dibuat.");
                 alert.showAndWait();
 
             } catch (DocumentException | IOException e) {
                 e.printStackTrace();
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
-                alert.setHeaderText("PDF Creation Failed");
-                alert.setContentText("Failed to create PDF: " + e.getMessage());
+                alert.setHeaderText("PDF Gagal Dibuat.");
+                alert.setContentText("PDF Gagal Dibuat: " + e.getMessage());
                 alert.showAndWait();
             }
         }
@@ -1042,10 +1056,10 @@ public class DashboardController {
             if (keteranganAcara == null || keteranganAcara.trim().isEmpty() ||
                     semester == null || semester.trim().isEmpty() ||
                     tanggal == null) {
-                Alert alert = new Alert(AlertType.ERROR);
+                Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText(null);
-                alert.setContentText("Please fill in all fields");
+                alert.setContentText("Tolong isi semua field");
 
                 alert.showAndWait();
                 return;
@@ -1064,11 +1078,18 @@ public class DashboardController {
         deleteBtnKalender.setOnAction(event -> {
             Acara selectedAcara = tableViewKalender.getSelectionModel().getSelectedItem();
             if (selectedAcara != null) {
-                tableViewKalender.getItems().remove(selectedAcara);
-                try {
-                    AppQuery.deleteAcara(selectedAcara);
-                } catch (SQLException e) {
-                    System.out.println("Failed to delete acara: " + e.getMessage());
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText(null);
+                alert.setContentText("Apakah anda yakin ingin menghapus acara?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent() && result.get() == ButtonType.OK) {
+                    tableViewKalender.getItems().remove(selectedAcara);
+                    try {
+                        AppQuery.deleteAcara(selectedAcara);
+                    } catch (SQLException e) {
+                        System.out.println("Failed to delete acara: " + e.getMessage());
+                    }
                 }
             }
         });
@@ -1083,7 +1104,7 @@ public class DashboardController {
                 if (keteranganAcara == null || keteranganAcara.trim().isEmpty() ||
                         semester == null || semester.trim().isEmpty() ||
                         tanggal == null) {
-                    Alert alert = new Alert(AlertType.ERROR);
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
                     alert.setHeaderText(null);
                     alert.setContentText("Please fill in all fields");
@@ -1096,7 +1117,14 @@ public class DashboardController {
                 tableViewKalender.getItems().set(tableViewKalender.getItems().indexOf(selectedAcara), newAcara);
 
                 try {
-                    AppQuery.updateAcara(selectedAcara, newAcara);
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Confirmation");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Apakah anda yakin ingin mengupdate acara?");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.isPresent() && result.get() == ButtonType.OK) {
+                        AppQuery.updateAcara(selectedAcara, newAcara);
+                    }
                 } catch (SQLException e) {
                     System.out.println("Failed to update acara: " + e.getMessage());
                 }
@@ -1104,13 +1132,13 @@ public class DashboardController {
         });
 
         clearBtnKalender.setOnAction(event -> {
-            Alert alert = new Alert(AlertType.CONFIRMATION);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmation");
             alert.setHeaderText(null);
-            alert.setContentText("Are you sure you want to clear the calendar?");
+            alert.setContentText("Apakah anda yakin ingin menghapus semua acara?");
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            if (result.isPresent() && result.get() == ButtonType.OK) {
                 tableViewKalender.getItems().clear();
                 try {
                     AppQuery.clearAcara();
@@ -1131,7 +1159,6 @@ public class DashboardController {
 
                         ketAcara.setText(selectedAcara.getKeteranganAcara());
                         semesterComboBox.setValue(selectedAcara.getSemester());
-
                     }
                 });
     }
@@ -1208,10 +1235,10 @@ public class DashboardController {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("PDF Creation");
             alert.setHeaderText(null);
-            alert.setContentText("PDF created successfully.");
+            alert.setContentText("PDF Berhasil Dibuat.");
             alert.showAndWait();
 
-            System.out.println("PDF created successfully.");
+            System.out.println("PDF Berhasil Dibuat.");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1227,9 +1254,9 @@ public class DashboardController {
     // Nilai Rapot
 
     public void initializeNilai() {
-        ComboBoxNilai.getItems().add("Tajwid");
-        ComboBoxNilai.getItems().add("Hafalan Surat Pendek");
-        ComboBoxNilai.getItems().add("Sejarah Kebudayaan Islam");
+        ComboBoxNilai.getItems().add("Matematika");
+        ComboBoxNilai.getItems().add("Bahasa Indonesia");
+        ComboBoxNilai.getItems().add("Sejarah Islam");
         mapelNilaiColumn.setCellValueFactory(new PropertyValueFactory<>("mataPelajaran"));
         ketNilaiColumn.setCellValueFactory(new PropertyValueFactory<>("ketSiswa"));
         nilaiColumn.setCellValueFactory(new PropertyValueFactory<>("nilaiSiswa"));
@@ -1258,6 +1285,7 @@ public class DashboardController {
             try {
                 AppQuery.addNilai(nilai);
                 tableViewNilai.getItems().add(nilai);
+                tableViewNilai.getSelectionModel().select(nilai);
             } catch (SQLException e) {
                 System.out.println("Failed to insert nilai: " + e.getMessage());
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -1272,7 +1300,7 @@ public class DashboardController {
             Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
             confirmationAlert.setTitle("Penghapusan");
             confirmationAlert.setHeaderText(null);
-            confirmationAlert.setContentText("Apakah anda yakin akan menghapus semua database?");
+            confirmationAlert.setContentText("Apakah anda yakin akan menghapus semua data?");
 
             Optional<ButtonType> result = confirmationAlert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -1287,19 +1315,30 @@ public class DashboardController {
                     alert.setContentText("Failed to delete all nilai: " + e.getMessage());
                     alert.showAndWait();
                 }
-            } else {
-                // do nothing
             }
         });
 
         dltBtnNilai.setOnAction(event -> {
             Nilai selectedNilai = tableViewNilai.getSelectionModel().getSelectedItem();
             if (selectedNilai != null) {
-                tableViewNilai.getItems().remove(selectedNilai);
-                try {
-                    AppQuery.dltNilai(selectedNilai);
-                } catch (SQLException e) {
-                    System.out.println("Failed to delete nilai: " + e.getMessage());
+                Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+                confirmationAlert.setTitle("Konfirmasi");
+                confirmationAlert.setHeaderText(null);
+                confirmationAlert.setContentText("Apakah anda yakin ingin menghapus nilai?");
+
+                Optional<ButtonType> result = confirmationAlert.showAndWait();
+                if (result.isPresent() && result.get() == ButtonType.OK) {
+                    try {
+                        AppQuery.dltNilai(selectedNilai);
+                        tableViewNilai.getItems().remove(selectedNilai);
+                    } catch (SQLException e) {
+                        System.out.println("Failed to delete nilai: " + e.getMessage());
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Nilai Deletion Failed");
+                        alert.setContentText("Failed to delete nilai: " + e.getMessage());
+                        alert.showAndWait();
+                    }
                 }
             }
         });
@@ -1316,11 +1355,24 @@ public class DashboardController {
                 selectedNilai.setKkmSiswa(kkmSiswa);
                 selectedNilai.setKetSiswa(ketSiswa);
 
-                try {
-                    AppQuery.upNilai(selectedNilai);
-                    tableViewNilai.refresh();
-                } catch (SQLException e) {
-                    System.out.println("Failed to update nilai: " + e.getMessage());
+                Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+                confirmationAlert.setTitle("Konfirmasi");
+                confirmationAlert.setHeaderText(null);
+                confirmationAlert.setContentText("Apakah anda yakin ingin mengupdate nilai?");
+
+                Optional<ButtonType> result = confirmationAlert.showAndWait();
+                if (result.isPresent() && result.get() == ButtonType.OK) {
+                    try {
+                        AppQuery.upNilai(selectedNilai);
+                        tableViewNilai.refresh();
+                    } catch (SQLException e) {
+                        System.out.println("Failed to update nilai: " + e.getMessage());
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Nilai Update Failed");
+                        alert.setContentText("Failed to update nilai: " + e.getMessage());
+                        alert.showAndWait();
+                    }
                 }
             } else {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -1345,6 +1397,7 @@ public class DashboardController {
         pdfBtnNilai.setDisable(searchField.getText().trim().isEmpty());
 
         pdfBtnNilai.setOnAction(event -> createPDFnilai());
+        rowSelectionListenerToNilaiTable();
     }
 
     public void rowSelectionListenerToNilaiTable() {
@@ -1352,7 +1405,7 @@ public class DashboardController {
                 .addListener((obs, oldSelection, newSelection) -> {
                     if (newSelection != null) {
                         Nilai selectedNilai = (Nilai) newSelection;
-
+                        ComboBoxNilai.setValue(null);
                         namaNilai.setText(selectedNilai.getNama());
                         nisNilai.setText(selectedNilai.getNis());
                         kelasNilai.setText(selectedNilai.getKelas());
@@ -1458,16 +1511,16 @@ public class DashboardController {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("PDF Creation");
             alert.setHeaderText(null);
-            alert.setContentText("PDF created successfully.");
+            alert.setContentText("PDF Berhasil Dibuat.");
             alert.showAndWait();
 
-            System.out.println("PDF Created successfully.");
+            System.out.println("PDF Berhasil Dibuat.");
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText("PDF Creation Failed");
-            alert.setContentText("Failed to create PDF: " + e.getMessage());
+            alert.setHeaderText("PDF Gagal Dibuat.");
+            alert.setContentText("PDF Gagal Dibuat: " + e.getMessage());
             alert.showAndWait();
         }
     }
@@ -1516,9 +1569,16 @@ public class DashboardController {
             NilaiHafalan selectedNilaiHafalan = TableHafalan.getSelectionModel().getSelectedItem();
             if (selectedNilaiHafalan != null) {
                 try {
-                    AppQuery.deleteNilai(selectedNilaiHafalan);
-                    TableHafalan.getItems().remove(selectedNilaiHafalan);
-                    showAlert("Success", "Data berhasil dihapus", Alert.AlertType.INFORMATION);
+                    Alert alert = new Alert(AlertType.CONFIRMATION);
+                    alert.setTitle("Confirmation");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Apakah anda yakin ingin menhapus nilai?");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK) {
+                        AppQuery.deleteNilai(selectedNilaiHafalan);
+                        TableHafalan.getItems().remove(selectedNilaiHafalan);
+                        showAlert("Success", "Data berhasil dihapus", Alert.AlertType.INFORMATION);
+                    }
                 } catch (SQLException e) {
                     showAlert("Error", "Gagal menghapus data: " + e.getMessage(), Alert.AlertType.ERROR);
                 }
@@ -1544,10 +1604,18 @@ public class DashboardController {
                 } else {
                     NilaiHafalan newNilai = new NilaiHafalan(nama, nis, surah, tanggal, kelas, banyakayat);
                     try {
-                        AppQuery.updateNilai(selectedNilaiHafalan, newNilai);
-                        TableHafalan.getItems().set(TableHafalan.getItems().indexOf(selectedNilaiHafalan), newNilai);
-                        showAlert("Success", "Data berhasil diupdate", Alert.AlertType.INFORMATION);
-                        initializeHafalanChart(); // Update chart
+                        Alert alert = new Alert(AlertType.CONFIRMATION);
+                        alert.setTitle("Confirmation");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Apakah anda yakin ingin mengupdate nilai");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == ButtonType.OK) {
+                            AppQuery.updateNilai(selectedNilaiHafalan, newNilai);
+                            TableHafalan.getItems().set(TableHafalan.getItems().indexOf(selectedNilaiHafalan),
+                                    newNilai);
+                            showAlert("Success", "Data berhasil diupdate", Alert.AlertType.INFORMATION);
+                            initializeHafalanChart();
+                        }
                     } catch (SQLException e) {
                         showAlert("Error", "Gagal mengupdate data: " + e.getMessage(), Alert.AlertType.ERROR);
                     }
@@ -1694,17 +1762,17 @@ public class DashboardController {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("PDF Creation");
             alert.setHeaderText(null);
-            alert.setContentText("PDF created successfully.");
+            alert.setContentText("PDF Berhasil Dibuat.");
             alert.showAndWait();
 
-            System.out.println("PDF Created successfully.");
+            System.out.println("PDF Berhasil Dibuat.");
 
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText("PDF Creation Failed");
-            alert.setContentText("Failed to create PDF: " + e.getMessage());
+            alert.setHeaderText("PDF Gagal Dibuat.");
+            alert.setContentText("PDF Gagal Dibuat. " + e.getMessage());
             alert.showAndWait();
         }
     }
